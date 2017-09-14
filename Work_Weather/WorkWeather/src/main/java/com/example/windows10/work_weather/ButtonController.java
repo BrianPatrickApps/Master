@@ -9,8 +9,7 @@ import android.widget.ImageView;
 import java.text.DateFormat;
 import java.util.Date;
 
-
-
+@SuppressWarnings("ALL")
 class ButtonController {
     private Database db;
     private Button stormy;
@@ -19,7 +18,7 @@ class ButtonController {
     private Button cloudy;
     private Button sunny;
     private ImageView weatherOverlay;
-    @SuppressWarnings("unused")
+    @SuppressWarnings("FieldCanBeLocal")
     private Context context;
     private String id;
     private Double mood;
@@ -38,7 +37,7 @@ class ButtonController {
         this.context = context;
         this.viewController = viewController;
         ma = new Main_Room();
-        db = new Database(context);
+        db = new Database(this.context);
         stormy.setOnClickListener(stormyClicked);
         rainy.setOnClickListener(rainyClicked);
         overcast.setOnClickListener(overcastClicked);
@@ -122,8 +121,6 @@ class ButtonController {
             }
             Log.d("ButtonController", "Adding: " + query);
             setInvisible();
-
-//            ma.showNurses();
 
             viewController.setBack();
             viewController.viewNurses();

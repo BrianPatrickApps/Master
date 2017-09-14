@@ -37,30 +37,7 @@ public class Database implements Serializable{
         database.execSQL(s);
     }
 
-    @SuppressWarnings("unused")
-    ArrayList<String> collectAllUsers(){
-        Cursor c = database.rawQuery("Select * from nurses WHERE shift_id = '"+ getShiftNumber()+"' AND inputDate ='"+ getDay()+"';",null);
-        ArrayList<String>theArray = new ArrayList<>();
-        if(c.getCount() ==0){
-            Toast.makeText(context, "Empty", Toast.LENGTH_SHORT).show();
-        }
-        while(c.moveToNext()){
-            String result = "User ID: " +c.getString(0)+
-                    "\t\t\tinput: " + c.getString(1)+
-                    "\t\t\tMedian: " + c.getString(2)+
-                    "\t\t\tDate: " + c.getString(3)+
-                    "\t\t\tShift: " + c.getString(4)
-                    ;
-            theArray.add(result);
-        }
-        Log.d("Database","collectAllUsers() All nurses collected");
-        c.close();
-        return theArray;
-    }
-
     ArrayList<String[]> collectFormattedUsers(){
-//        Cursor c = database.rawQuery("Select * from nurses WHERE shift_id = '"+ getShiftNumber()+"' AND inputDate ='"+ getDay()+
-//                "' AND changed ='"+ 0 +"';",null);
         Cursor c = database.rawQuery("Select * from nurses WHERE shift_id = '"+ getShiftNumber()+"' AND inputDate ='"+ getDay()+"';",null);
         ArrayList<String[]>theArray = new ArrayList<>();
         if(c.getCount() ==0){
@@ -179,7 +156,6 @@ public class Database implements Serializable{
     }
 
     int getShiftNumber(){
-        //resetKey();
         Cursor c = database.rawQuery("Select * from key;",null);
         ArrayList<Integer>theArray = new ArrayList<>();
         if(c.getCount() ==0){
@@ -213,7 +189,6 @@ public class Database implements Serializable{
     }
 
     private int getCountNumber(){
-        //resetKey();
         Cursor c = database.rawQuery("Select * from counter;",null);
         ArrayList<Integer>theArray = new ArrayList<>();
         if(c.getCount() ==0){
@@ -286,7 +261,6 @@ public class Database implements Serializable{
 
     int doOver(String id){
         int redo;
-//        Cursor c = database.rawQuery("Select COUNT(id) from nurses where id = '"+id+"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';",null);
         Cursor c =database.rawQuery("Select id from nurses where changed = '"+0+"'AND inputDate ='"+ getDay()+"'AND id ='"+ id+ "' AND shift_id ='"+ getShiftNumber() +"';",null);
         ArrayList<Integer>theArray = new ArrayList<>();
 
@@ -349,4 +323,3 @@ public class Database implements Serializable{
         }
     }
 }
-

@@ -53,6 +53,7 @@ public class Main_Room extends AppCompatActivity
      * @param rainOverlay holds image of the gif to show rain
      * @param weatherOverlay holds images of the weather corresponding to the median of the room
      */
+
     protected Database db;
     Button stormy;
     Button rainy;
@@ -97,10 +98,11 @@ public class Main_Room extends AppCompatActivity
         counter = new Counter();
         db = new Database(this);
         Log.d("Main_Room","onCreate() "+"Shift number: "+  +db.getShiftNumber()+ " in Main Activity "+ " Receiver");
+
         databaseReset();
         databaseReset2();
         databaseReset3();
-        //databaseReset4();
+
         RelativeLayout rel3 = (RelativeLayout)findViewById(R.id.inputScreen);
         @SuppressWarnings("deprecation")
         AbsoluteLayout rel2 = (AbsoluteLayout) findViewById(R.id.Nurse);
@@ -138,7 +140,6 @@ public class Main_Room extends AppCompatActivity
 
         Glide.with(getApplication().getApplicationContext()).load(R.drawable.animation_rain).into(rainOverlay);
 
-        //checkWeather(db,viewController);
         viewController.startUp();
 
         nurse1 = (ImageView)findViewById(R.id.nurse1);
@@ -158,7 +159,6 @@ public class Main_Room extends AppCompatActivity
         nurseArray.add(nurse7);
 
         Calendar c = Calendar.getInstance();
-        System.out.println("Current time => " + c.getTime());
 
         @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
         String formattedDate = df.format(c.getTime());
@@ -169,14 +169,6 @@ public class Main_Room extends AppCompatActivity
         nursebutton.setOnClickListener(nurseMenu);
         clearScreen();
 
-
-//        ImageView iv = (ImageView)findViewById(R.id.imageView3);
-//        iv.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                viewController.fadeOutAndHideImage();
-//            }
-//        });
     }
 
     /**
@@ -275,19 +267,13 @@ public class Main_Room extends AppCompatActivity
         if (id == R.id.nav_login) {
             selectItem(1);
         }
-//        else if (id == R.id.nav_fingerprint) {
-//            selectItem(2);
-//        }
-//        else if (id == R.id.nav_data) {
-//            selectItem(3);
-//        }
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
     /**
-     *
      * @param position the user selection
      */
     //Which button is to be pressed. Add stuff if need be
@@ -299,18 +285,11 @@ public class Main_Room extends AppCompatActivity
                 control.setViewable();
                 viewController.viewInput();
                 break;
-            case 2:
-                //loginFinger();
-                Toast.makeText(getApplicationContext(), "Finger Print Scanner unavailable", Toast.LENGTH_LONG).show();
-                break;
-            case 3:
-                dataLogin();
-                break;
             default:
         }
     }
-    //Login alertDialog box
 
+    //Login alertDialog box
     /**
      * loginID method that collects the 6 digit ID of the user and sends it to the ButtonController,
      * which INSERTS the data of the user into the SQLite Database.
@@ -333,8 +312,6 @@ public class Main_Room extends AppCompatActivity
             public void onClick(DialogInterface dialog, int whichButton) {
 
                 try {
-                    //int id = Integer.parseInt(input.getText().toString());
-                    //if(id > 99999 && id < 1000000)
                     if(input.getText().toString().length() ==6)
                     {
                         control.setViewable();
@@ -342,17 +319,6 @@ public class Main_Room extends AppCompatActivity
                         control.getId(inputID);
                         Log.d("Main_Room","loginID() "+inputID + " InputID");
                         idNow = inputID;
-//                        Handler handler = new Handler();
-//                        handler.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                viewController.viewNurses();
-//                                checkWeather();
-//                                inputOverlay.setImageResource(R.drawable.input_1);
-//                                showNurses();
-//                            }
-//                        },5000);//Change to two
-//                        showNurses();
                     }
                     else
                     {
@@ -380,85 +346,6 @@ public class Main_Room extends AppCompatActivity
         alert.show();
     }
 
-    //FingerPrint method no scanner given yet
-    @SuppressWarnings("unused")
-    private void loginFinger(){
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-        alert.setTitle("Login with Fingerprint");
-        alert.setMessage("Finger");
-
-        //an EditText view to get user input
-        final EditText input = new EditText(this);
-        alert.setView(input);
-
-        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                Toast.makeText(getApplicationContext(), "Finger Print Scanner unavailable", Toast.LENGTH_LONG).show();
-                Intent x =new Intent(Main_Room.this,WeatherRoom.class);
-                startActivity(x);
-                finish();
-            }
-        });
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                Toast.makeText(getApplicationContext(), "Back to the menu", Toast.LENGTH_SHORT).show();
-            }
-        });
-        alert.show();
-    }
-
-    private void dataLogin(){
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-        alert.setTitle("Admin Login");
-        alert.setMessage("Please Enter Password");
-
-        //an EditText view to get user input
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_NUMBER);
-        input.setFilters(new InputFilter[] { new InputFilter.LengthFilter(6)});
-        alert.setView(input);
-
-        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                try {
-                    int id = Integer.parseInt(input.getText().toString());
-                    if (id == 0) {
-                        Intent i = new Intent(Main_Room.this, DataScreen.class);
-                        startActivity(i);
-                    } else if (id == 1) {
-                        Intent i = new Intent(Main_Room.this, WeatherRoom.class);
-                        startActivity(i);
-                    } else if (id == 2) {
-                        db.saveDB();
-                    }else if (id == 3) {
-                        db.updateShift();
-                        Toast.makeText(getApplicationContext(), "Shift has been updated to " + db.getShiftNumber(), Toast.LENGTH_LONG).show();
-                        Intent i = new Intent();
-                        i.setClass(getApplicationContext(), Main_Room.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        getApplicationContext().getApplicationContext().startActivity((i));
-                        finish();
-                    }
-                    else
-                        Toast.makeText(getApplicationContext(), "Sorry wrong password", Toast.LENGTH_LONG).show();
-                }
-                catch (Exception e) {
-                    Toast.makeText(getApplicationContext(), "\t\t\tSorry invalid input\nonly 6 digits are acceptable", Toast.LENGTH_LONG).show();
-                    loginID();
-                }
-            }
-        });
-
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                Toast.makeText(getApplicationContext(), "Back to the menu", Toast.LENGTH_SHORT).show();
-            }
-        });
-        alert.show();
-    }
-
     /**
      * checkWeather calculates the median based on the number of nurses that are in the room
      * @param db SQLite controller
@@ -467,28 +354,29 @@ public class Main_Room extends AppCompatActivity
     protected void checkWeather(Database db,ViewController viewController){
         Double x = db.getRoomMedian();
         Log.d("Main_Room","checkWeather() Check Weather Median is "+ x);
-        if(x==0.0){
+        if (x != 0.0) {
+            if(x == 1.0)
+            {
+                viewController.showThunder();
+            }
+            else if(x ==2.0 || x == 1.5){
+                viewController.showRainMood();
+            }
+            else if(x ==3.0|| x == 2.5)
+            {
+                viewController.stopRain();
+                viewController.showOvercast();
+            }
+            else if(x ==4.0|| x == 3.5){
+                viewController.stopRain();
+                viewController.showClouds();
+            }
+            else if(x==5.0|| x == 4.5) {
+                viewController.stopRain();
+                viewController.showSun();
+            }
+        } else {
             viewController.startUp();
-        }
-        else if(x == 1.0)
-        {
-            viewController.showThunder();
-        }
-        else if(x ==2.0 || x == 1.5){
-            viewController.showRainMood();
-        }
-        else if(x ==3.0|| x == 2.5)
-        {
-            viewController.stopRain();
-            viewController.showOvercast();
-        }
-        else if(x ==4.0|| x == 3.5){
-            viewController.stopRain();
-            viewController.showClouds();
-        }
-        else if(x==5.0|| x == 4.5) {
-            viewController.stopRain();
-            viewController.showSun();
         }
     }
 
@@ -506,7 +394,6 @@ public class Main_Room extends AppCompatActivity
                 counter.resetCount();
             if (!sub) { //boolean check to see if mx number of nurses already visible
                 iv.setVisibility(View.VISIBLE);
-//                fadeOutAndHideImage(iv);
                 Log.d("Main_Room", "showNurses() nurse number: " + iv);
                 nurseTimeout(nurseArray.get(counter.getCount()));//calls the nurse timeout method with the imageview of the nurse that just went visible.
                 counter.setCount();
@@ -534,7 +421,7 @@ public class Main_Room extends AppCompatActivity
         final ImageView iv = (ImageView) v;
         final String nurseId = control.id();
         new CountDownTimer((1000 * 60 * 120), (1000 * 60 * 120)) { //timer set to be 3 seconds long and tick once every 3 seconds. Will be 2 hours each for final app
-//        new CountDownTimer(10000,10000) { //timer set to be 3 seconds long and tick once every 3 seconds. Will be 2 hours each for final app
+//        new CountDownTimer(10000,10000) { testing 10 seconds
             public void onTick(long millisUntilFinished) { //nothing needed here as we only disable an image after the full time
             }
             public void onFinish() {
@@ -550,7 +437,6 @@ public class Main_Room extends AppCompatActivity
     public void changeMind(){
         if(counter.getCount() == 0) {
             Log.d("Main_Room","changeMind() "+"Changed mind no nurses "+idNow);
-//            counter.removeCount();
             ImageView iv = nurseArray.get(counter.getCount());
             iv.setVisibility(View.VISIBLE);
             counter.setCount();
@@ -561,12 +447,10 @@ public class Main_Room extends AppCompatActivity
             ImageView imageView = nurseArray.get(counter.getCount());
             Log.d("Main_Room", "changeMind() "+"nurse number: " + imageView);
             imageView.setVisibility(View.GONE);
-//            counter.setCount();
             final ImageView iv = nurseArray.get(counter.getCount());
             if (counter.getCount() > nurseArray.size())
                 counter.resetCount();
             if (!sub) { //boolean check to see if mx number of nurses already visible
-//            iv.setVisibility(View.VISIBLE);
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -575,7 +459,6 @@ public class Main_Room extends AppCompatActivity
                     }
                 },1000);
                 Log.d("Main_Room", "ChangedMind() nurse number: " + iv + " no Timer has been called");
-//                nurseTimeout(nurseArray.get(counter.getCount()));//calls the nurse timeout method with the imageview of the nurse that just went visible.
                 counter.setCount();
                 if (counter.getCount() == nurseArray.size()) {
                     counter.removeCount();
@@ -592,6 +475,28 @@ public class Main_Room extends AppCompatActivity
         }
     }
 
+    void clearScreen(){
+        if(counter.getCount() ==0)
+            db.dbClearScreen();
+        else
+            Log.d("Main_Room","clearScreen() "+"Empty no outlying inputs");
+    }
+
+    void fadeOutAndHideImage(final ImageView img) {
+        Animation fadeOut = new AlphaAnimation(0, 1);
+        fadeOut.setInterpolator(new AccelerateInterpolator());
+        fadeOut.setDuration(1000);
+        fadeOut.setAnimationListener(new Animation.AnimationListener()
+        {
+            public void onAnimationEnd(Animation animation)
+            {
+                img.setVisibility(View.VISIBLE);
+            }
+            public void onAnimationRepeat(Animation animation) {}
+            public void onAnimationStart(Animation animation) {}
+        });
+        img.startAnimation(fadeOut);
+    }
 
     //------------------------------------------------------------------------------------------
 
@@ -655,44 +560,6 @@ public class Main_Room extends AppCompatActivity
             cal_alarm2.add(Calendar.DATE,1);
         }
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal_alarm2.getTimeInMillis(), AlarmManager.INTERVAL_DAY,pendingIntent);
-    }
-
-    @SuppressWarnings("unused")
-    public void databaseReset4() {
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR, 11);
-        calendar.set(Calendar.MINUTE, 56);
-        calendar.set(Calendar.AM_PM, Calendar.PM);
-        Intent myIntent = new Intent(this, MyReceiver4.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 3, myIntent,0);
-
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, pendingIntent);
-    }
-
-     void fadeOutAndHideImage(final ImageView img)
-    {
-        Animation fadeOut = new AlphaAnimation(0, 1);
-        fadeOut.setInterpolator(new AccelerateInterpolator());
-        fadeOut.setDuration(1000);
-        fadeOut.setAnimationListener(new Animation.AnimationListener()
-        {
-            public void onAnimationEnd(Animation animation)
-            {
-                img.setVisibility(View.VISIBLE);
-            }
-            public void onAnimationRepeat(Animation animation) {}
-            public void onAnimationStart(Animation animation) {}
-        });
-        img.startAnimation(fadeOut);
-    }
-
-    void clearScreen(){
-        if(counter.getCount() ==0)
-            db.dbClearScreen();
-        else
-            Log.d("Main_Room","clearScreen() "+"Empty no outlying inputs");
     }
 
 }

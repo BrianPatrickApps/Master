@@ -12,14 +12,8 @@ class DatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 2;
 
     // Database creation sql statement
-
     private String DATABASE_NURSES = ("CREATE TABLE IF NOT EXISTS nurses(id String,input INT,median DOUBLE,date String,shift_id INT,inputDate String,changed INT);");
-    //shift_id is set Shift 1 7.30 - 16.00 Shift 2 16.00-22.30 Shift 3 22.30-7.30
-    //Update table at end of each shift from avgRoom
-    //This one shows the median of the room throughout the day during the shift and what time of the day
     private String DATABASE_AVG = ("CREATE TABLE IF NOT EXISTS avgShift(shift_id INT,average DOUBLE,inputDate String);");
-    //Set to 0 after starting a new shift
-    //the last median of the shift
     private String DATABASE_ROOM_AVG = ("CREATE TABLE IF NOT EXISTS avgRoom(key_id INT,median DOUBLE,inputDate String);");
     private String DATABASE_KEY = ("CREATE TABLE IF NOT EXISTS key(key_id INT);");
     private String DATABASE_Counter = ("CREATE TABLE IF NOT EXISTS counter(key_id INT);");

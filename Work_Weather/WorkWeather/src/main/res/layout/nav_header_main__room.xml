@@ -21,7 +21,8 @@
             app:srcCompat="@drawable/nurse1"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"/>
+            android:layout_alignParentStart="true"
+            android:contentDescription="Nurse image button holder"/>
 
     <TextView
             android:id="@+id/textView2"
