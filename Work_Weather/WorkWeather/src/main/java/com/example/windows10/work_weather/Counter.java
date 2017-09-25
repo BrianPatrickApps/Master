@@ -2,7 +2,7 @@ package com.example.windows10.work_weather;
 
 
 class Counter {
-    private int count =0;
+    private int count = 0;
 
     Counter(){
     }

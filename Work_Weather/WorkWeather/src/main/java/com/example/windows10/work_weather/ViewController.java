@@ -43,7 +43,7 @@ class ViewController implements Serializable{
 
         Animation fadeOut = new AlphaAnimation(0, 1);
         fadeOut.setInterpolator(new AccelerateInterpolator());
-        fadeOut.setDuration(1000);
+        fadeOut.setDuration(250);
 
         fadeOut.setAnimationListener(new Animation.AnimationListener()
         {

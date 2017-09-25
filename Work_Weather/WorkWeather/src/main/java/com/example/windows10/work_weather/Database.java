@@ -22,14 +22,11 @@ public class Database implements Serializable{
     private DatabaseHelper dbHelper;
     private SQLiteDatabase database;
     private Context context;
-    @SuppressWarnings("WeakerAccess")
-    Counter counter;
 
     public Database(Context context){
         this.context = context;
         dbHelper = new DatabaseHelper(context);
         database = dbHelper.getWritableDatabase();
-        this.counter = new Counter();
     }
 
 
@@ -38,75 +35,80 @@ public class Database implements Serializable{
     }
 
     ArrayList<String[]> collectFormattedUsers(){
-        Cursor c = database.rawQuery("Select * from nurses WHERE shift_id = '"+ getShiftNumber()+"' AND inputDate ='"+ getDay()+"';",null);
+        Cursor collectedFormattedUsers = database.rawQuery("Select * from nurses WHERE shift_id = '"+ getShiftNumber()+"' AND inputDate ='"+ getDay()+"';",null);
         ArrayList<String[]>theArray = new ArrayList<>();
-        if(c.getCount() ==0){
+        if(collectedFormattedUsers == null){
             Toast.makeText(context, "Empty", Toast.LENGTH_SHORT).show();
+            return theArray;
         }
-        while(c.moveToNext()){
-            String result = c.getString(0)+
-                    "/" + c.getString(1)+
-                    "/" + c.getString(2)+
-                    "/" + c.getString(3)+
-                    "/" + c.getString(4)
-                    ;
-            String newResult[] = result.split("/");
-            theArray.add(newResult);
+        else {
+            while (collectedFormattedUsers.moveToNext()) {
+                String result = collectedFormattedUsers.getString(0) +
+                        "/" + collectedFormattedUsers.getString(1) +
+                        "/" + collectedFormattedUsers.getString(2) +
+                        "/" + collectedFormattedUsers.getString(3) +
+                        "/" + collectedFormattedUsers.getString(4);
+                String newResult[] = result.split("/");
+                theArray.add(newResult);
+            }
+            Log.d("Database", "collectFormattedUsers() All nurses collected");
+            collectedFormattedUsers.close();
+            return theArray;
         }
-        Log.d("Database","collectFormattedUsers() All nurses collected");
-        c.close();
-        return theArray;
     }
 
     //Gets the median
     double getAverage(double mood){
-        Log.d("Database","getAverage() Select * from nurses WHERE shift_id = '"+ getShiftNumber()+"' AND inputDate ='"+ getDay()+"';");
-        Cursor c = database.rawQuery("Select * from nurses WHERE shift_id = '"+ getShiftNumber()+"' AND inputDate ='"+ getDay()+
+        Cursor gotAverages = database.rawQuery("Select * from nurses WHERE shift_id = '"+ getShiftNumber()+"' AND inputDate ='"+ getDay()+
                 "' AND changed ='"+ 0 +"';",null);
-        ArrayList<Double> theArray = new ArrayList<>();
-        if(c.getCount() ==0){
+        ArrayList<Double> collectedAverage = new ArrayList<>();
+        if(gotAverages ==null){
             Log.d("Database","getAverage() Empty");
+            return 0;
         }
-        while(c.moveToNext()){
-            Double result = c.getDouble(1);
-            theArray.add(result);
+        else {
+            while (gotAverages.moveToNext()) {
+                Double result = gotAverages.getDouble(1);
+                collectedAverage.add(result);
+            }
+            collectedAverage.add(mood);
+            Collections.sort(collectedAverage);
+            double median;
+            if (collectedAverage.size() % 2 == 0) {
+                median = (collectedAverage.get(collectedAverage.size() / 2) + collectedAverage.get(collectedAverage.size() / 2 - 1)) / 2;
+            } else {
+                median = collectedAverage.get(collectedAverage.size() / 2);
+            }
+            Log.d("Database", "getAverage() " + collectedAverage.size() + " size of the sample size, " + "Cursor size: " + gotAverages.getCount());
+            gotAverages.close();
+            return median;
         }
-        theArray.add(mood);
-        Collections.sort(theArray);
-        double median;
-        if (theArray.size() % 2 == 0) {
-            median = (theArray.get(theArray.size()/2) + theArray.get(theArray.size()/2 - 1))/2;
-        } else {
-            median = theArray.get(theArray.size()/2);
-        }
-        Log.d("Database","getAverage() "+theArray.size()+ " size of the sample size, "+"Cursor size: "+ c.getCount());
-        c.close();
-        return median;
     }
 
     double getRoomMedian(){
-        Log.d("Database","getRoomMedian() "+"Select * from nurses WHERE shift_id = '"+ getShiftNumber()+"' AND inputDate ='"+ getDay()+"';");
-        Cursor c = database.rawQuery("Select * from nurses WHERE shift_id = '"+ getShiftNumber()+"' AND inputDate ='"+ getDay()+
+        Cursor roomMedianCursor = database.rawQuery("Select * from nurses WHERE shift_id = '"+ getShiftNumber()+"' AND inputDate ='"+ getDay()+
                 "' AND changed ='"+ 0 +"';",null);
-        ArrayList<Double> theArray = new ArrayList<>();
-        if(c.getCount() ==0){
+        ArrayList<Double> collectedRoomMedian = new ArrayList<>();
+        if(roomMedianCursor.getCount() ==0){
             Log.d("Database","getRoomMedian() "+"Empty");
             return 0;
         }
-        while(c.moveToNext()){
-            Double result = c.getDouble(1);
-            theArray.add(result);
+        else {
+            while (roomMedianCursor.moveToNext()) {
+                Double result = roomMedianCursor.getDouble(1);
+                collectedRoomMedian.add(result);
+            }
+            Collections.sort(collectedRoomMedian);
+            double median;
+            if (collectedRoomMedian.size() % 2 == 0) {
+                median = (collectedRoomMedian.get(collectedRoomMedian.size() / 2) + collectedRoomMedian.get(collectedRoomMedian.size() / 2 - 1)) / 2;
+            } else {
+                median = collectedRoomMedian.get(collectedRoomMedian.size() / 2);
+            }
+            Log.d("Database", "getRoomMedian() " + collectedRoomMedian.size() + " size of the sample size, " + "Cursor size: " + roomMedianCursor.getCount());
+            roomMedianCursor.close();
+            return median;
         }
-        Collections.sort(theArray);
-        double median;
-        if (theArray.size() % 2 == 0) {
-            median = (theArray.get(theArray.size()/2) + theArray.get(theArray.size()/2 - 1))/2;
-        } else {
-            median = theArray.get(theArray.size()/2);
-        }
-        Log.d("Database","getRoomMedian() "+theArray.size()+ " size of the sample size, "+"Cursor size: "+ c.getCount());
-        c.close();
-        return median;
     }
 
     //Adds Median to avgShift and avgRoom
@@ -121,138 +123,135 @@ public class Database implements Serializable{
 
     //Collects the median of the shift
     double getMedian(){
-        ArrayList<Double> theArray = new ArrayList<>();
-        Cursor c = database.rawQuery("Select * from avgRoom where key_id = '"+getShiftNumber()+"'AND inputDate ='"+ getDay()+ "';",null);
-        if(c.getCount() ==0){
+        ArrayList<Double> collectedMedians = new ArrayList<>();
+        Cursor getMedianCursor = database.rawQuery("Select * from avgRoom where key_id = '"+getShiftNumber()+
+                "'AND inputDate ='"+ getDay()+ "';",null);
+        if(getMedianCursor.getCount() ==0){
             return 0.0;
         }
         else{
-            while(c.moveToNext())
+            while(getMedianCursor.moveToNext())
             {
-                Double median = c.getDouble(1);
-                theArray.add(median);
+                Double median = getMedianCursor.getDouble(1);
+                collectedMedians.add(median);
             }
         }
-        Log.d("Median: ",String.valueOf(theArray.get(0)));
-        c.close();
-        Log.d("Database",theArray.get(0)+ "is the Median");
-        return theArray.get(0);
+        getMedianCursor.close();
+        Log.d("Database",collectedMedians.get(0)+ "is the Median");
+        return collectedMedians.get(0);
     }
 
-    //gets called when the broadcast reciever fires
+    //gets called when the broadcast receiver fires
     void updateShift(){
         String query = "UPDATE key set key_id = '"+(getShiftNumber()+1)+"' WHERE key_id ='"+getShiftNumber()+"';";
         execSQL(query);
         resetKey();
-        Log.d("Database","updateShift() "+"Update Query: "+ query);
+        Log.d("Database","updateShift() "+"Shift number has been updated " + getShiftNumber());
     }
 
     void setShift(int number){
-        String query = "UPDATE key set key_id = '"+(number)+"' WHERE key_id ='"+getShiftNumber()+"';";
+        String query = "UPDATE key set key_id = '"+ number +"' WHERE key_id ='"+getShiftNumber()+"';";
         resetKey();
-        Log.d("Database","setShift() "+"Update Query: "+ query);
         execSQL(query);
         Log.d("Database","setShift() "+"Shift Number has been updated: "+ getShiftNumber());
     }
 
     int getShiftNumber(){
-        Cursor c = database.rawQuery("Select * from key;",null);
-        ArrayList<Integer>theArray = new ArrayList<>();
-        if(c.getCount() ==0){
+        Cursor shiftNumberMedian = database.rawQuery("Select * from key;",null);
+        ArrayList<Integer>collectedShiftNumbers = new ArrayList<>();
+        if(shiftNumberMedian.getCount() ==0){
             Toast.makeText(context, "Empty", Toast.LENGTH_SHORT).show();
         }
-        while(c.moveToNext()){
-            int result = c.getInt(0);
-            theArray.add(result);
+        while(shiftNumberMedian.moveToNext()){
+            int result = shiftNumberMedian.getInt(0);
+            collectedShiftNumbers.add(result);
         }
-        c.close();
-        return theArray.get(0);
+        shiftNumberMedian.close();
+        return collectedShiftNumbers.get(0);
     }
 
     private void resetKey(){
-        Cursor c = database.rawQuery("Select * from key;",null);
-        ArrayList<Integer>theArray = new ArrayList<>();
-        if(c.getCount() ==0){
+        Cursor resetKeyCursors = database.rawQuery("Select * from key;",null);
+        ArrayList<Integer>collectedKey = new ArrayList<>();
+        if(resetKeyCursors.getCount() ==0){
             Toast.makeText(context, "Empty", Toast.LENGTH_SHORT).show();
         }
-        while(c.moveToNext()){
-            int result = c.getInt(0);
-            theArray.add(result);
+        while(resetKeyCursors.moveToNext()){
+            int result = resetKeyCursors.getInt(0);
+            collectedKey.add(result);
         }
-        int key = theArray.get(0);
+        int key = collectedKey.get(0);
         String query = "UPDATE key set key_id = '"+0+"' WHERE key_id ='"+getShiftNumber()+"';";
         if(key ==4) {
             execSQL(query);
-            Log.d("Database","resetKey() "+"Shift Number Resetted to: " + getShiftNumber());
+            Log.d("Database","resetKey() "+"Shift Number Reset to: " + getShiftNumber());
         }
-        c.close();
+        resetKeyCursors.close();
     }
 
     private int getCountNumber(){
-        Cursor c = database.rawQuery("Select * from counter;",null);
-        ArrayList<Integer>theArray = new ArrayList<>();
-        if(c.getCount() ==0){
+        Cursor getCountNumberCursor = database.rawQuery("Select * from counter;",null);
+        ArrayList<Integer>collectedCountNumber = new ArrayList<>();
+        if(getCountNumberCursor.getCount() ==0){
             Toast.makeText(context, "Empty", Toast.LENGTH_SHORT).show();
         }
-        while(c.moveToNext()){
-            int result = c.getInt(0);
-            theArray.add(result);
+        while(getCountNumberCursor.moveToNext()){
+            int result = getCountNumberCursor.getInt(0);
+            collectedCountNumber.add(result);
         }
-        c.close();
-        return theArray.get(0);
+        getCountNumberCursor.close();
+        return collectedCountNumber.get(0);
     }
 
     String getDay(){
-        Cursor c = database.rawQuery("Select * from day;",null);
-        ArrayList<String>theArray = new ArrayList<>();
-        if(c.getCount() ==0){
+        Cursor getDayCursor = database.rawQuery("Select * from day;",null);
+        ArrayList<String>collectedDay = new ArrayList<>();
+        if(getDayCursor.getCount() ==0){
             Toast.makeText(context, "Empty", Toast.LENGTH_SHORT).show();
         }
-        while(c.moveToNext()){
-            String result = c.getString(1);
-            theArray.add(result);
+        while(getDayCursor.moveToNext()){
+            String result = getDayCursor.getString(1);
+            collectedDay.add(result);
         }
-        c.close();
-        return theArray.get(0);
+        getDayCursor.close();
+        return collectedDay.get(0);
     }
 
     void updateDate(String newDate){
         String query = "UPDATE day set inputDate = '"+newDate+"' WHERE key_id ='"+0+"';";
-        Log.d("Database","updateDate() "+"Update Query: "+ query);
+        Log.d("Database","updateDate() "+"Date has been updated: "+ getDay());
         resetKey();
         execSQL(query);
-
     }
 
     void saveDB() {
         String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-        File exportDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),"WorkWeather");
-        if (!exportDir.exists()) {
+        File exportDirectory = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),"WorkWeather");
+        if (!exportDirectory.exists()) {
             //noinspection ResultOfMethodCallIgnored
-            exportDir.mkdirs();
+            exportDirectory.mkdirs();
         }
-        Log.d("Database","saveDB() "+exportDir.toString());
-        File file = new File(exportDir, currentDateTimeString+ " " +getCountNumber()+ ".csv");
+        Log.d("Database","saveDB() "+exportDirectory.toString());
+        File file = new File(exportDirectory, currentDateTimeString+ " " +getCountNumber()+ ".csv");
         Log.d("Database","saveDB() "+file.toString());
         try {
             //noinspection ResultOfMethodCallIgnored
             file.createNewFile();
-            CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
+            CSVWriter csvWriter = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = dbHelper.getReadableDatabase();
-            Cursor curCSV = db.rawQuery("SELECT * FROM nurses", null);
-            csvWrite.writeNext(curCSV.getColumnNames());
-            while (curCSV.moveToNext()) {
-                //Which column you want to export
-                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4)};
-                csvWrite.writeNext(arrStr);
-                Log.d("Database","saveDB() "+arrStr[0]);
+            Cursor csvCursor = db.rawQuery("SELECT * FROM nurses", null);
+            csvWriter.writeNext(csvCursor.getColumnNames());
+            while (csvCursor.moveToNext()) {
+                String csvStrings[] = {csvCursor.getString(0), csvCursor.getString(1), csvCursor.getString(2), csvCursor.getString(3), csvCursor.getString(4),csvCursor.getString(5)};
+                csvWriter.writeNext(csvStrings);
+                Log.d("Database","saveDB() "+csvStrings[0]);
             }
-            csvWrite.close();
-            curCSV.close();
-            MediaScannerConnection.scanFile(context, new String[] {exportDir.toString()}, null, null);
+            csvWriter.close();
+            csvCursor.close();
+            MediaScannerConnection.scanFile(context, new String[] {exportDirectory.toString()}, null, null);
             String query2 = "UPDATE counter set key_id = '"+(getCountNumber()+1)+"' WHERE key_id ='"+getCountNumber()+"';";
             execSQL(query2);
-            Log.d("Database","saveDB() "+"Update Query: "+ query2);
+            Log.d("Database","saveDB() "+"Counter has been updated: "+ getCountNumber());
         }
         catch (Exception sqlEx) {
             Log.d("Database", "saveDB() "+sqlEx.getMessage()+ "Exception", sqlEx);
@@ -261,65 +260,63 @@ public class Database implements Serializable{
 
     int doOver(String id){
         int redo;
-        Cursor c =database.rawQuery("Select id from nurses where changed = '"+0+"'AND inputDate ='"+ getDay()+"'AND id ='"+ id+ "' AND shift_id ='"+ getShiftNumber() +"';",null);
-        ArrayList<Integer>theArray = new ArrayList<>();
+        Cursor doOverCursor =database.rawQuery("Select id from nurses where changed = '"+0+"'AND inputDate ='"+ getDay()+"'AND id ='"+ id+ "' AND shift_id ='"+ getShiftNumber() +"';",null);
+        ArrayList<Integer>collectedInput = new ArrayList<>();
 
-        while(c.moveToNext()){
-            int a = c.getInt(0);
-            theArray.add(a);
+        while(doOverCursor.moveToNext()){
+            int column = doOverCursor.getInt(0);
+            collectedInput.add(column);
         }
 
-        if(theArray.size() > 0)
+        if(collectedInput.size() > 0)
             redo =1;
         else
             redo =0;
 
-        c.close();
-        Log.d("Database","doOver() "+"reDo output is "+ redo+ ", There is already: "+ theArray.size() + " ID is " + id);
+        doOverCursor.close();
+        Log.d("Database","doOver() "+"reDo output is "+ redo+ ", There is already: "+ collectedInput.size() + " ID is " + id);
         return redo;
     }
 
     int factCheck(String id){
-        int redo;
-        Cursor c = database.rawQuery("Select COUNT(id) from nurses where id = '"+id+"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';",null);
-        ArrayList<Integer>theArray = new ArrayList<>();
+        int factCheck;
+        Cursor factCheckCursor = database.rawQuery("Select COUNT(id) from nurses where id = '"+id+"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';",null);
+        ArrayList<Integer>collectedInput = new ArrayList<>();
 
-        while(c.moveToNext()){
-            int a = c.getInt(0);
-            theArray.add(a);
+        while(factCheckCursor.moveToNext()){
+            int a = factCheckCursor.getInt(0);
+            collectedInput.add(a);
         }
 
-        if(theArray.get(0) > 0)
-            redo =1;
+        if(collectedInput.get(0) > 0)
+            factCheck =1;
         else
-            redo =0;
+            factCheck =0;
 
-        c.close();
-        Log.d("Database","factCheck() "+"factCheck output is "+ redo+ ", There is already: "+ theArray.get(0) + " ID is " + id);
-        return redo;
+        factCheckCursor.close();
+        Log.d("Database","factCheck() "+"factCheck output is "+ factCheck+ ", There is already: "+ collectedInput.get(0) + " ID is " + id);
+        return factCheck;
     }
 
     void changedMind(String id){
-        database.execSQL("UPDATE nurses set changed = '"+ 1 + "' where id= '"+id+"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';");
+        database.execSQL("UPDATE nurses set changed = '"+ 1 + "' where id= '"+
+                id +"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';");
         Log.d("Database","changedMind() "+"changedMind is called");
-      Log.d("Database","changedMind() "+"UPDATE nurses set changed = '"+ 1 + "' where id= '"+id+"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';");
     }
 
-
-
     void dbClearScreen(){
-        Cursor c =database.rawQuery("Select id from nurses where changed = '"+0+"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';",null);
-        Log.d("Database", "dbClearScreen() "+"Size of cursor:" + c.getCount());
-        ArrayList<Integer> aList = new ArrayList<>();
-        while (c.moveToNext()){
-            aList.add(c.getInt(0));
+        Cursor dbClearScreenCursor =database.rawQuery("Select id from nurses where changed = '"+0+"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';",null);
+        Log.d("Database", "dbClearScreen() "+"Size of cursor:" + dbClearScreenCursor.getCount());
+        ArrayList<Integer> previousRoomNurses = new ArrayList<>();
+        while (dbClearScreenCursor.moveToNext()){
+            previousRoomNurses.add(dbClearScreenCursor.getInt(0));
         }
-        c.close();
-        for(int i=0;i<aList.size();i++)
+        dbClearScreenCursor.close();
+        for(int i=0;i<previousRoomNurses.size();i++)
         {
-            Log.d("Database","dbClearScreen() "+"aList:"+ i +" id is: " +aList.get(i));
-            database.execSQL("UPDATE nurses set changed = '"+ 1 + "' where id= '"+aList.get(i)+"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';");
-            Log.d("Database","dbClearScreen() "+"UPDATE nurses set changed = '"+ 1 + "' where id= '"+aList.get(i)+"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';");
+            Log.d("Database","dbClearScreen() "+"aList:"+ i +" id is: " +previousRoomNurses.get(i));
+            database.execSQL("UPDATE nurses set changed = '"+ 1 + "' where id= '"+previousRoomNurses.get(i)+"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';");
+            Log.d("Database","dbClearScreen() "+"UPDATE nurses set changed = '"+ 1 + "' where id= '"+previousRoomNurses.get(i)+"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';");
         }
     }
 }

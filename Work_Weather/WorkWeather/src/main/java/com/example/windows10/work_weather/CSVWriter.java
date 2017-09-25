@@ -8,135 +8,67 @@ import java.io.Writer;
 
 class CSVWriter {
 
-    private PrintWriter pw;
-
+    private PrintWriter printWriter;
     private char separator;
-
-    private char quotechar;
-
-    private char escapechar;
-
+    private char quoteCharacter;
+    private char escapeCharacter;
     private String lineEnd;
 
-    /** The character used for escaping quotes. */
     private static final char DEFAULT_ESCAPE_CHARACTER = '"';
-
-    /** The default separator to use if none is supplied to the constructor. */
     private static final char DEFAULT_SEPARATOR = ',';
-
-    /**
-     * The default quote character to use if none is supplied to the
-     * constructor.
-     */
     private static final char DEFAULT_QUOTE_CHARACTER = '"';
-
-    /** The quote constant to use when you wish to suppress all quoting. */
     private static final char NO_QUOTE_CHARACTER = '\u0000';
-
-    /** The escape constant to use when you wish to suppress all escaping. */
     private static final char NO_ESCAPE_CHARACTER = '\u0000';
-
-    /** Default line terminator uses platform encoding. */
     private static final String DEFAULT_LINE_END = "\n";
 
-    /**
-     * Constructs CSVWriter using a comma for the separator.
-     *
-     * @param writer
-     *            the writer to an underlying CSV source.
-     */
     CSVWriter(Writer writer) {
         this(writer, DEFAULT_SEPARATOR, DEFAULT_QUOTE_CHARACTER,
                 DEFAULT_ESCAPE_CHARACTER, DEFAULT_LINE_END);
     }
 
-    /**
-     * Constructs CSVWriter with supplied separator, quote char, escape char and line ending.
-     *
-     * @param writer
-     *            the writer to an underlying CSV source.
-     * @param separator
-     *            the delimiter to use for separating entries
-     * @param quotechar
-     *            the character to use for quoted elements
-     * @param escapechar
-     *            the character to use for escaping quotechars or escapechars
-     * @param lineEnd
-     * 			  the line feed terminator to use
-     */
-    @SuppressWarnings("WeakerAccess")
-    CSVWriter(Writer writer, char separator, char quotechar, char escapechar, String lineEnd) {
-        this.pw = new PrintWriter(writer);
+    private CSVWriter(Writer writer, char separator, char quoteCharacter, char escapeCharacter, String lineEnd) {
+        this.printWriter = new PrintWriter(writer);
         this.separator = separator;
-        this.quotechar = quotechar;
-        this.escapechar = escapechar;
+        this.quoteCharacter = quoteCharacter;
+        this.escapeCharacter = escapeCharacter;
         this.lineEnd = lineEnd;
     }
 
-    /**
-     * Writes the next line to the file.
-     *
-     * @param nextLine
-     *            a string array with each comma-separated element as a separate
-     *            entry.
-     */
     void writeNext(String[] nextLine) {
 
         if (nextLine == null)
             return;
 
-        @SuppressWarnings("StringBufferMayBeStringBuilder") StringBuffer sb = new StringBuffer();
+        StringBuilder stringbuilder = new StringBuilder();
         for (int i = 0; i < nextLine.length; i++) {
-
             if (i != 0) {
-                sb.append(separator);
+                stringbuilder.append(separator);
             }
-
             String nextElement = nextLine[i];
             if (nextElement == null)
                 continue;
-            if (quotechar !=  NO_QUOTE_CHARACTER)
-                sb.append(quotechar);
+            if (quoteCharacter !=  NO_QUOTE_CHARACTER)
+                stringbuilder.append(quoteCharacter);
             for (int j = 0; j < nextElement.length(); j++) {
                 char nextChar = nextElement.charAt(j);
-                if (escapechar != NO_ESCAPE_CHARACTER && nextChar == quotechar) {
-                    sb.append(escapechar).append(nextChar);
-                } else if (escapechar != NO_ESCAPE_CHARACTER && nextChar == escapechar) {
-                    sb.append(escapechar).append(nextChar);
+                if (escapeCharacter != NO_ESCAPE_CHARACTER && nextChar == quoteCharacter) {
+                    stringbuilder.append(escapeCharacter).append(nextChar);
+                } else if (escapeCharacter != NO_ESCAPE_CHARACTER && nextChar == escapeCharacter) {
+                    stringbuilder.append(escapeCharacter).append(nextChar);
                 } else {
-                    sb.append(nextChar);
+                    stringbuilder.append(nextChar);
                 }
             }
-            if (quotechar != NO_QUOTE_CHARACTER)
-                sb.append(quotechar);
+            if (quoteCharacter != NO_QUOTE_CHARACTER)
+                stringbuilder.append(quoteCharacter);
         }
-
-        sb.append(lineEnd);
-        pw.write(sb.toString());
-
+        stringbuilder.append(lineEnd);
+        printWriter.write(stringbuilder.toString());
     }
 
-    /**
-     * Flush underlying stream to writer.
-     *
-     * @throws IOException if bad things happen
-     */
-    @SuppressWarnings("unused")
-    public void flush() throws IOException {
-
-        pw.flush();
-
-    }
-
-    /**
-     * Close the underlying stream writer flushing any buffered content.
-     *
-     * @throws IOException if bad things happen
-     *
-     */
     void close() throws IOException {
-        pw.flush();
-        pw.close();
+        printWriter.flush();
+        printWriter.close();
     }
 
 }

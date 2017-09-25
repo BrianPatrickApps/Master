@@ -9,7 +9,7 @@ public class MyReceiver3 extends BroadcastReceiver {
     private static final String TAG = "Receiver";
     public void onReceive(Context context, Intent in) {
         Database db = new Database(context);
-        db.setShift(3);
+        db.setShift(0);
         db.saveDB();
         Log.d(TAG,"Shift number gone up "+  +db.getShiftNumber()+"Receiver 3 has gone off");
         Intent i = new Intent();
