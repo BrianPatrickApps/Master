@@ -1,15 +1,12 @@
 package com.example.windows10.work_weather;
 
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,39 +16,38 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.widget.AbsoluteLayout;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
-
+import android.view.*;
+import android.widget.*;
 import com.bumptech.glide.Glide;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
 
 public class Main_Room extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener ,Serializable{
     /**
-     * @param db the Database object controlling all the SQLite database
-     * @param inputOverlay holds image of the input for users to pick
-     * @param rainOverlay holds image of the gif to show rain
-     * @param weatherOverlay holds images of the weather corresponding to the median of the room
+     * @param db the Database object controlling all the SQLite database.
+     * @param inputOverlay holds image of the input for users to pick.
+     * @param rainOverlay holds image of the gif to show rain.
+     * @param weatherOverlay holds images of the weather corresponding to the median of the room.
+     * @param control object that controls the inputs of users to be inserted into the SQLite Database.
+     * @param viewController object that controls the images on screen corresponding
+     *                       to data from SQLite Database given by users.
+     * @param sub Boolean that checks in the max amount of nurse images has been used.
+     * @param notUsedNotification Boolean that checks if the hasn't been used for 20 mins notification is called
+     * @param notifyUsers CountDownTimer that is started when I user inputs, if the app is not used within 20 mins
+     *                    notification is called has for input.It is cancelled if there is input before the timer
+     *                    runs out.
+     * @param nurseTimer1 Object holding the ID of the user, Nurse Image representing them and the timer that starts
+     *                    when they input which after 2 hours will erase them from the screen, remove them from the sample
+     *                    the median is being calculated making their input null but saving their data in the database.
+     * @param nurseArray  ArrayList holding the 7 nurse images for users to use when they input.
+     * @param counter Object that keeps count of the number of users that are being displayed.
+     *
      */
-
     private Database db;
-    private ImageView inputOverlay;
     private ButtonController control;
     private ViewController viewController;
     private boolean sub = false;
@@ -59,14 +55,6 @@ public class Main_Room extends AppCompatActivity
     private CountDownTimer notifyUsers;
     private String idNow;
 
-//    CountDownTimer timer1;
-//    CountDownTimer timer2;
-//    CountDownTimer timer3;
-//    CountDownTimer timer4;
-//    CountDownTimer timer5;
-//    CountDownTimer timer6;
-//    CountDownTimer timer7;
-//
     private NurseTimer nurseTimer1;
     private NurseTimer nurseTimer2;
     private NurseTimer nurseTimer3;
@@ -75,11 +63,6 @@ public class Main_Room extends AppCompatActivity
     private NurseTimer nurseTimer6;
     private NurseTimer nurseTimer7;
 
-    /**
-     * @param control object that controls the inputs of users to be inserted into the SQLite Databse
-     * @param viewController object that controls the images on screen corresponding
-     *                      to data from SQLite Database given by users
-     */
     private ArrayList<ImageView> nurseArray;
     private Counter counter;
 
@@ -94,46 +77,41 @@ public class Main_Room extends AppCompatActivity
         db = new Database(this);
         Log.d("Main_Room","App has started, the shift number is " + db.getShiftNumber());
 
-        databaseReset();
-        databaseReset2();
-        databaseReset3();
+        AlarmController alarmController = new AlarmController(this);
+        alarmController.startAlarms();
 
         RelativeLayout rel3 = (RelativeLayout)findViewById(R.id.inputScreen);
-        @SuppressWarnings("deprecation")
         AbsoluteLayout rel2 = (AbsoluteLayout) findViewById(R.id.Nurse);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        //noinspection deprecation
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        /*
-      */
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        ImageView weatherOverlay = (ImageView) findViewById(R.id.moodOverlay);
+        ImageView rainOverlay = (ImageView) findViewById(R.id.rainOverlay);
+        ImageView inputOverlay = (ImageView) findViewById(R.id.inputWeather);
 
         RelativeLayout rel = (RelativeLayout)findViewById(R.id.relLay);
         rel.setOnClickListener(tapScreen);
-
-        //Initialize buttons for ButtonController class
         Button stormy = (Button) findViewById(R.id.Stormy);
         Button rainy = (Button) findViewById(R.id.Rain);
         Button overcast = (Button) findViewById(R.id.Overcast);
         Button cloudy = (Button) findViewById(R.id.Cloudy);
         Button sunny = (Button) findViewById(R.id.Sunny);
 
-        ImageView weatherOverlay = (ImageView) findViewById(R.id.moodOverlay);
-        inputOverlay = (ImageView)findViewById(R.id.inputWeather);
-        ImageView rainOverlay = (ImageView) findViewById(R.id.rainOverlay);
 
-        viewController = new ViewController(rel,rel2,rel3, rainOverlay, weatherOverlay,inputOverlay);
 
-        control = new ButtonController(stormy, rainy, overcast, cloudy, sunny,inputOverlay,getApplicationContext(),viewController);
-        //Makes buttons invisible
+
+        viewController = new ViewController(rel,rel2,rel3, rainOverlay, weatherOverlay, inputOverlay);
+        viewController.startUp();
+
+        control = new ButtonController(stormy, rainy, overcast, cloudy, sunny, inputOverlay,getApplicationContext(),viewController);
         control.setInvisible();
         Glide.with(getApplication().getApplicationContext()).load(R.drawable.animation_rain).into(rainOverlay);
-        viewController.startUp();
+
 
         ImageView nurse1 = (ImageView)findViewById(R.id.nurse1);
         ImageView nurse2 = (ImageView)findViewById(R.id.nurse2);
@@ -158,8 +136,8 @@ public class Main_Room extends AppCompatActivity
         db.updateDate(formattedDate);
 
         View header = navigationView.getHeaderView(0);
-        ImageView nursebutton = (ImageView)header.findViewById(R.id.TUNURSE);
-        nursebutton.setOnClickListener(new View.OnClickListener() {
+        ImageView nurseButton = (ImageView)header.findViewById(R.id.TUNURSE);
+        nurseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dataLogin();
@@ -176,7 +154,12 @@ public class Main_Room extends AppCompatActivity
     }
 
     /**
-     * nurseMenu is the menu that is used when Administrator needs to check/change data
+     * nurseMenu() Is the method called when an administrator wants to use the administrator controls that can only
+     * be accessed by a verification of a password that only the admin knows.
+     * Within this method admin can check the all the inputs of the users within that shift.
+     * Check the current variables of the shift.
+     * Force save the database into a csv file
+     * Force change the shift
      */
     private void nurseMenu(){
             final String[] option = {"Data","Test","Save","Change"};
@@ -212,7 +195,10 @@ public class Main_Room extends AppCompatActivity
             builder.show();
         }
 
-    //When back is pressed, not used
+    /**
+     * onBackPressed()
+     * When the menu and the back button is pressed then it closes the menu.
+     */
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -222,7 +208,12 @@ public class Main_Room extends AppCompatActivity
             super.onBackPressed();
         }
     }
-    //When screen is tapped opens drawer
+
+    /**
+     * tapScreen
+     * A button listener for a button that encompasses the whole screen in which when pressed
+     * opens the menu for the user but also closes it when the menu is open.
+     */
     private View.OnClickListener tapScreen = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -251,12 +242,10 @@ public class Main_Room extends AppCompatActivity
 
     /**
      * onNavigationItemSelected selects the method to execute from user input
-     * @param item selected object
+     * @param item selected Input from menu which can only be loginID
      * @return true
      */
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+    public boolean onNavigationItemSelected(@SuppressWarnings("NullableProblems") MenuItem item) {
         int id = item.getItemId();
 
         if (id == R.id.nav_login) {
@@ -268,9 +257,11 @@ public class Main_Room extends AppCompatActivity
         return true;
     }
 
-    //Which button is to be pressed. Add stuff if need be
+    /**
+     * Menu controller that opens the needed method for the user, since there is only one
+     * option,so 1 is given to open the menu item for users to input.
+     */
     private void selectItem() {
-
         switch(1) {
             case 1:
                 loginID();
@@ -281,18 +272,19 @@ public class Main_Room extends AppCompatActivity
         }
     }
 
+    /**
+     * dataLogin()
+     * This method collects the password from the admin which allows them to access the nurseMenu.
+     */
     private void dataLogin() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
         alert.setTitle("Admin Login");
         alert.setMessage("Please Enter Password");
 
-        //an EditText view to get user input
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_NUMBER);
         input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(6)});
         alert.setView(input);
-
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 try {
@@ -309,12 +301,12 @@ public class Main_Room extends AppCompatActivity
         alert.show();
     }
 
-    //Login alertDialog box
     /**
      * loginID method that collects the 6 digit ID of the user and sends it to the ButtonController,
      * which INSERTS the data of the user into the SQLite Database.
      * After inserting a nurse ImageView appears that corresponds to the user, the median is recalculated
      * based on the number of nurses in the room or in the database
+     * After all the SQL operations other methods are called showNurses()
      */
     private void loginID(){
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -327,10 +319,8 @@ public class Main_Room extends AppCompatActivity
         input.setInputType(InputType.TYPE_CLASS_NUMBER);
         input.setFilters(new InputFilter[] { new InputFilter.LengthFilter(6)});
         alert.setView(input);
-
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-
                 try {
                     if(input.getText().toString().length() ==6)
                     {
@@ -363,19 +353,20 @@ public class Main_Room extends AppCompatActivity
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 Toast.makeText(getApplicationContext(), "Back to the menu ", Toast.LENGTH_SHORT).show();
-                control.setInvisible();
-                viewController.viewNurses();
-                checkWeather(db,viewController);
-                inputOverlay.setImageResource(R.drawable.input_1);
+                control.cancelledInput();
             }
         });
         alert.show();
     }
 
     /**
-     * checkWeather calculates the median based on the number of nurses that are in the room
-     * @param db SQLite controller
-     * @param viewController controls the images
+     * checkWeather calculates or calculates the median based on the number of nurses that are in the room
+     * @param db SQLite controller which calls the method getRoomMedian which collects the median of the
+     *           room based on the sample of nurses that are being displayed in the room. If the room is
+     *           empty then it calls another method which clears the screen only for when the app is starting
+     *           or a reset has occurred.
+     * @param viewController Object that controls all the images that correlates to the median. It shows
+     *                       the overall background, the light of weather, the weather itself and the rain.
      */
     void checkWeather(Database db, ViewController viewController){
         Double x = db.getRoomMedian();
@@ -408,13 +399,13 @@ public class Main_Room extends AppCompatActivity
 
     @SuppressWarnings("ConstantConditions")
     private void showNurses(){
-        //Available nurse image chosen by counter.
         int reDo =db.doOver(idNow);
         if(reDo == 1)
             changeMind();
         else if(reDo == 0) {
             Log.d("Main_Room","new Nurse is being displayed");
             ImageView nurseView = nurseArray.get(counter.getCount());
+            //starts setting nurses invisible manually if the max is visible.
             if (!sub) { //boolean check to see if mx number of nurses already visible
                 nurseView.setVisibility(View.VISIBLE);
                 setTimer(nurseView,counter.getCount());
@@ -425,30 +416,35 @@ public class Main_Room extends AppCompatActivity
                     counter.resetCount();
                 }
             }
-            else { //starts setting nurses invisible manually if the max is visible.
-                NurseTimer maxedOut = getTimer(counter.getCount());
-                ImageView previousNurse = maxedOut.getNurseImage();
-                previousNurse.setVisibility(View.GONE);
-                if (maxedOut != null) {
-                    maxedOut.maxedReached();
+            else maxedNurses();
+        }
+    }
+
+    private void maxedNurses(){
+        if(sub){
+            getTimer(counter.getCount()).maxedReached();
+            getTimer(counter.getCount()).closeNurseImage();
+            final ImageView newNurse = nurseArray.get(counter.getCount());
+            newNurse.setVisibility(View.GONE);
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    viewController.fadeTheImage(newNurse,1,0,View.VISIBLE);
                 }
-                ImageView newNurse = nurseArray.get(counter.getCount());
-                newNurse.setVisibility(View.VISIBLE);
-                setTimer(newNurse,counter.getCount());
-                getTimer(counter.getCount()).startTimer();
-                counter.setCount();
-                Log.d("Main_Room","Nurse Array has gone over 7 and is now in the reset loop");
-                if (counter.getCount() == 7) {
-                    counter.resetCount();
-                    sub = false;
-                    Log.d("Main_Room","NurseArray has been reset");
-                }
+            },1000);
+            setTimer(newNurse,counter.getCount());
+            getTimer(counter.getCount()).startTimer();
+            counter.setCount();
+            if (counter.getCount() == 7) {
+                counter.resetCount();
+                Log.d("Main_Room","NurseArray has been reset");
             }
         }
     }
 
     private void changeMind(){
-        if(counter.getCount() == 0) {
+        if(counter.getCount() == 0 && !sub) {
             Log.d("Main_Room","This ID is already in the Database but the room is empty: "+idNow);
             ImageView nurseView = nurseArray.get(counter.getCount());
             nurseView.setVisibility(View.VISIBLE);
@@ -456,16 +452,17 @@ public class Main_Room extends AppCompatActivity
         }
         else if(counter.getCount() > 0){
             counter.removeCount();
-            ImageView nurseView = nurseArray.get(counter.getCount());
+            final ImageView nurseView = nurseArray.get(counter.getCount());
             nurseView.setVisibility(View.GONE);
             Log.d("Main_Room","This ID is already in the Database no timer will be called: "+ idNow);
             final ImageView nurseImage = nurseArray.get(counter.getCount());
+            //starts setting nurses invisible manually if the max is visible.
             if (!sub) { //boolean check to see if mx number of nurses already visible
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        fadeOutAndHideImage(nurseImage);
+                        viewController.fadeTheImage(nurseView,1,0,View.VISIBLE);
                     }
                 },1000);
                 counter.setCount();
@@ -473,35 +470,15 @@ public class Main_Room extends AppCompatActivity
                     counter.resetCount();
                     sub = true;
                 }
-            } else { //starts setting nurses invisible manually if the max is visible.
-                NurseTimer maxedOut = getTimer(counter.getCount());
-                ImageView previousNurse = maxedOut.getNurseImage();
-                previousNurse.setVisibility(View.GONE);
-                if (maxedOut != null) {
-                    maxedOut.maxedReached();
-                }
-                ImageView newNurse = nurseArray.get(counter.getCount());
-                setTimer(newNurse,counter.getCount());
-                getTimer(counter.getCount()).startTimer();
-                counter.setCount();
-                newNurse.setVisibility(View.VISIBLE);
-                Log.d("Main_Room","Nurse Array has gone over 7 and is now in the reset loop");
-                if (counter.getCount() == 7) {
-                    counter.resetCount();
-                    sub = false;
-                    Log.d("Main_Room","NurseArray has been reset");
-                }
             }
+            else maxedNurses();
         }
     }
 
     private void unusedNotification(){
-
         notUsedNotification = true;
         Log.d("Main_Room","unusedNotification has started: "+ true);
         notifyUsers =new CountDownTimer((1000 * 60 * 20), (1000 * 60 * 20)) {
-//        notifyUsers =new CountDownTimer((10000), (10000)) {
-            @Override
             public void onTick(long millisUntilFinished) {
             }
             @Override
@@ -528,86 +505,9 @@ public class Main_Room extends AppCompatActivity
             Log.d("Main_Room","clearScreen() "+"There are no outlying inputs");
     }
 
-    private void fadeOutAndHideImage(final ImageView img) {
-        Animation fadeOut = new AlphaAnimation(0, 1);
-        fadeOut.setInterpolator(new AccelerateInterpolator());
-        fadeOut.setDuration(1000);
-        fadeOut.setAnimationListener(new Animation.AnimationListener()
-        {
-            public void onAnimationEnd(Animation animation) {img.setVisibility(View.VISIBLE);}
-            public void onAnimationRepeat(Animation animation) {}
-            public void onAnimationStart(Animation animation) {}
-        });
-        img.startAnimation(fadeOut);
-    }
-
-    //------------------------------------------------------------------------------------------
-
-    private void databaseReset() {
-        Toast.makeText(getApplicationContext(), "Alarm 1 set", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, MyReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 0, intent, 0);
-
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-        //set time for 22:00 reset
-        Date dat3  = new Date();
-        Calendar cal_alarm3 = Calendar.getInstance();
-        Calendar cal_now3 = Calendar.getInstance();
-        cal_now3.setTime(dat3);
-        cal_alarm3.setTime(dat3);
-        cal_alarm3.set(Calendar.HOUR_OF_DAY,15);//set the alarm time
-        cal_alarm3.set(Calendar.MINUTE, 0);
-        cal_alarm3.set(Calendar.SECOND,0);
-        if(cal_alarm3.before(cal_now3)){//if its in the past increment
-            cal_alarm3.add(Calendar.DATE,1);
-        }
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal_alarm3.getTimeInMillis(), AlarmManager.INTERVAL_DAY,pendingIntent);
-    }
-
-    private void databaseReset2() {
-        Toast.makeText(getApplicationContext(), "Alarm 2 set", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, MyReceiver2.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 1, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        //set time for 16:00 reset
-        Date dat2  = new Date();//initializes to now
-        Calendar cal_alarm2 = Calendar.getInstance();
-        Calendar cal_now2 = Calendar.getInstance();
-        cal_now2.setTime(dat2);
-        cal_alarm2.setTime(dat2);
-        cal_alarm2.set(Calendar.HOUR_OF_DAY,22);//set the alarm time
-        cal_alarm2.set(Calendar.MINUTE, 45);
-        cal_alarm2.set(Calendar.SECOND,0);
-        if(cal_alarm2.before(cal_now2)){//if its in the past increment
-            cal_alarm2.add(Calendar.DATE,1);
-        }
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal_alarm2.getTimeInMillis(), AlarmManager.INTERVAL_DAY,pendingIntent);
-    }
-
-    private void databaseReset3() {
-        Toast.makeText(getApplicationContext(), "Alarm 3 set", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, MyReceiver3.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(),4, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        //set time for 16:00 reset
-        Date dat2  = new Date();//initializes to now
-        Calendar cal_alarm2 = Calendar.getInstance();
-        Calendar cal_now2 = Calendar.getInstance();
-        cal_now2.setTime(dat2);
-        cal_alarm2.setTime(dat2);
-        cal_alarm2.set(Calendar.HOUR_OF_DAY,7);//set the alarm time
-        cal_alarm2.set(Calendar.MINUTE, 30);
-        cal_alarm2.set(Calendar.SECOND,0);
-        if(cal_alarm2.before(cal_now2)){//if its in the past increment
-            cal_alarm2.add(Calendar.DATE,1);
-        }
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal_alarm2.getTimeInMillis(), AlarmManager.INTERVAL_DAY,pendingIntent);
-    }
 
     private void setTimer(View v,int countDownID) {
         Log.d("Main_Room","setTimer is starting: " + countDownID);
-
         if(countDownID ==0) {
             final ImageView iv = (ImageView) v;
             final String nurseId = control.id();
@@ -667,5 +567,4 @@ public class Main_Room extends AppCompatActivity
         }
         return null;
     }
-
 }

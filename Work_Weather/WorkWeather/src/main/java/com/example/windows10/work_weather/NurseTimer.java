@@ -43,8 +43,8 @@ class NurseTimer {
         Log.d("NurseTimer","timer is cleared: " + nurseId);
     }
 
-    ImageView getNurseImage(){
-        return nurseImage;
+    void closeNurseImage(){
+        nurseImage.setVisibility(View.GONE);
     }
 
 }

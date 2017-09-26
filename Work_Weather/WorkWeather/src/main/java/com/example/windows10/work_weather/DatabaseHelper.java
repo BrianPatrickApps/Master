@@ -46,7 +46,6 @@ class DatabaseHelper extends SQLiteOpenHelper {
         database.execSQL("INSERT INTO counter VALUES('0');");
     }
 
-    /* Method is called during an upgrade of the database, */
     @Override
     public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion){
         Log.d("Database_Helper",

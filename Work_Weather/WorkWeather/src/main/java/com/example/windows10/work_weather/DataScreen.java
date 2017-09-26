@@ -1,6 +1,5 @@
 package com.example.windows10.work_weather;
 
-import android.annotation.SuppressLint;
 import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.os.Bundle;

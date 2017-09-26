@@ -30,8 +30,8 @@ public class Database implements Serializable{
     }
 
 
-    void execSQL(String s) {
-        database.execSQL(s);
+    void execSQL(String query) {
+        database.execSQL(query);
     }
 
     ArrayList<String[]> collectFormattedUsers(){
@@ -44,10 +44,10 @@ public class Database implements Serializable{
         else {
             while (collectedFormattedUsers.moveToNext()) {
                 String result = collectedFormattedUsers.getString(0) +
-                        "/" + collectedFormattedUsers.getString(1) +
-                        "/" + collectedFormattedUsers.getString(2) +
-                        "/" + collectedFormattedUsers.getString(3) +
-                        "/" + collectedFormattedUsers.getString(4);
+                            "/" + collectedFormattedUsers.getString(1) +
+                            "/" + collectedFormattedUsers.getString(2) +
+                            "/" + collectedFormattedUsers.getString(3) +
+                            "/" + collectedFormattedUsers.getString(4);
                 String newResult[] = result.split("/");
                 theArray.add(newResult);
             }

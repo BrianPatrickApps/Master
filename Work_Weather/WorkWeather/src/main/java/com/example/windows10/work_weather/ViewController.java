@@ -7,9 +7,7 @@ import android.view.animation.Animation;
 import android.widget.AbsoluteLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-
 import java.io.Serializable;
-
 
 class ViewController implements Serializable{
 
@@ -40,22 +38,7 @@ class ViewController implements Serializable{
     }
 
     private void setRain(){
-
-        Animation fadeOut = new AlphaAnimation(0, 1);
-        fadeOut.setInterpolator(new AccelerateInterpolator());
-        fadeOut.setDuration(250);
-
-        fadeOut.setAnimationListener(new Animation.AnimationListener()
-        {
-            public void onAnimationEnd(Animation animation)
-            {
-                rainOverlay.setVisibility(View.VISIBLE);
-            }
-            public void onAnimationRepeat(Animation animation) {}
-            public void onAnimationStart(Animation animation) {}
-        });
-
-        rainOverlay.startAnimation(fadeOut);
+        fadeTheImage(rainOverlay,0,1,View.VISIBLE);
     }
 
     void stopRain(){
@@ -63,32 +46,32 @@ class ViewController implements Serializable{
     }
 
     void showSun(){
-        fadeOutAndHideImage();
+        fadeTheImage(weatherOverlay,0,1,View.VISIBLE);
         weatherOverlay.setImageResource(R.drawable.weather_sun);
         mainScreen.setBackgroundResource(R.drawable.background5_sunny);
     }
 
     void showClouds(){
-        fadeOutAndHideImage();
+        fadeTheImage(weatherOverlay,0,1,View.VISIBLE);
         weatherOverlay.setImageResource(R.drawable.weather_halfclouds);
         mainScreen.setBackgroundResource(R.drawable.background4_semi_clouded);
     }
 
     void showOvercast(){
-        fadeOutAndHideImage();
+        fadeTheImage(weatherOverlay,0,1,View.VISIBLE);
         weatherOverlay.setImageResource(R.drawable.weather_clouds);
         mainScreen.setBackgroundResource(R.drawable.background3_clouded);
     }
 
     void showRainMood(){
-        fadeOutAndHideImage();
+        fadeTheImage(weatherOverlay,0,1,View.VISIBLE);
         weatherOverlay.setImageResource(R.drawable.weather_rain);
         setRain();
         mainScreen.setBackgroundResource(R.drawable.background2_rain);
     }
 
     void showThunder(){
-        fadeOutAndHideImage();
+        fadeTheImage(weatherOverlay,0,1,View.VISIBLE);
         weatherOverlay.setImageResource(R.drawable.weather_thunder);
         setRain();
         mainScreen.setBackgroundResource(R.drawable.background1_thunderstorm);
@@ -105,31 +88,11 @@ class ViewController implements Serializable{
         inputOverlay.setImageResource(R.drawable.input_1);
     }
 
-    private void fadeOutAndHideImage()
-    {
-        Animation fadeOut = new AlphaAnimation(0, 1);
-        fadeOut.setInterpolator(new AccelerateInterpolator());
-        fadeOut.setDuration(500);
-
-        fadeOut.setAnimationListener(new Animation.AnimationListener()
-        {
-            public void onAnimationEnd(Animation animation)
-            {
-                weatherOverlay.setVisibility(View.VISIBLE);
-            }
-            public void onAnimationRepeat(Animation animation) {}
-            public void onAnimationStart(Animation animation) {}
-        });
-
-        weatherOverlay.startAnimation(fadeOut);
-    }
-
     void fadeOut()
     {
         Animation fadeOut = new AlphaAnimation(1, 0);
         fadeOut.setInterpolator(new AccelerateInterpolator());
-        fadeOut.setDuration(500);
-
+        fadeOut.setDuration(400);
             fadeOut.setAnimationListener(new Animation.AnimationListener()
             {
                 public void onAnimationEnd(Animation animation)
@@ -141,6 +104,26 @@ class ViewController implements Serializable{
             });
 
         weatherOverlay.startAnimation(fadeOut);
+    }
+
+    void fadeTheImage(final ImageView img, int fadeInNumber, int fadeOutNumber, final int visibility){
+        Animation fadeOut = new AlphaAnimation(fadeInNumber, fadeOutNumber);
+        fadeOut.setInterpolator(new AccelerateInterpolator());
+        fadeOut.setDuration(500);
+        fadeOut.setAnimationListener(new Animation.AnimationListener()
+        {
+            public void onAnimationEnd(Animation animation) {img.setVisibility(visibility);}
+            public void onAnimationRepeat(Animation animation) {}
+            public void onAnimationStart(Animation animation) {}
+        });
+        img.startAnimation(fadeOut);
+    }
+
+    void afterInput(){
+        fadeOut();
+        setBack();
+        viewNurses();
+
     }
 
 }

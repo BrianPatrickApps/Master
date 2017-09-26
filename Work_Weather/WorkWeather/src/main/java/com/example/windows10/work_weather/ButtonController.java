@@ -43,7 +43,11 @@ class ButtonController {
         sunny.setOnClickListener(sunnyClicked);
 
     }
-    //sets all buttons visible
+
+    /**
+     * setViewable
+     * Makes the buttons visible so the users can select what their mood
+     */
     void setViewable() {
         stormy.setVisibility(View.VISIBLE);
         rainy.setVisibility(View.VISIBLE);
@@ -51,7 +55,12 @@ class ButtonController {
         cloudy.setVisibility(View.VISIBLE);
         sunny.setVisibility(View.VISIBLE);
     }
-    //sets all buttons invisible
+
+    /**
+     * setInvisible
+     * Makes all the buttons invisible(GONE) so they can't be used when the
+     * nurses are showed.
+     */
     void setInvisible() {
         stormy.setVisibility(View.GONE);
         rainy.setVisibility(View.GONE);
@@ -100,31 +109,36 @@ class ButtonController {
             select();
         }
     };
-        private void select() {
-            String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-            Double avg = database.getAverage(mood);
-            String query = "INSERT into nurses(`id`,`input`,`median`,`date`,`shift_id`,`inputDate`,`changed`)" +
-                    "VALUES('" + id + "','"+ mood +"','"+ avg +"','"+ currentDateTimeString +"','"+ database.getShiftNumber()+"','"+
-                    database.getDay()+"','"+ 0 +"');";
-            
-            database.addMedian(avg,currentDateTimeString,database.getShiftNumber());
-            int factCheck = database.factCheck(id);
-            if(factCheck == 1) {
-                Log.d("ButtonController","factCheck is 1");
-                database.changedMind(id);
-                database.execSQL(query);
-            }
-            else if(factCheck == 0) {
-                Log.d("ButtonController","factCheck is 0");
-                database.execSQL(query);
-            }
-            setInvisible();
 
-            viewController.setBack();
-            viewController.viewNurses();
-            viewController.fadeOut();
-            main_room.checkWeather(database,viewController);
+    private void select() {
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        Double avg = database.getAverage(mood);
+        String query = "INSERT into nurses(`id`,`input`,`median`,`date`,`shift_id`,`inputDate`,`changed`)" +
+                "VALUES('" + id + "','"+ mood +"','"+ avg +"','"+ currentDateTimeString +"','"+ database.getShiftNumber()+"','"+
+                database.getDay()+"','"+ 0 +"');";
+
+        database.addMedian(avg,currentDateTimeString,database.getShiftNumber());
+        int factCheck = database.factCheck(id);
+        if(factCheck == 1) {
+            Log.d("ButtonController","factCheck is 1");
+            database.changedMind(id);
+            database.execSQL(query);
         }
+        else if(factCheck == 0) {
+            Log.d("ButtonController","factCheck is 0");
+            database.execSQL(query);
+        }
+        setInvisible();
+        viewController.afterInput();
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                main_room.checkWeather(database,viewController);
+            }
+        },400);
+
+    }
 
     void getId(String id) {
         this.id = id;
@@ -132,6 +146,13 @@ class ButtonController {
 
     String id(){
         return id;
+    }
+
+    void cancelledInput(){
+        setInvisible();
+        viewController.viewNurses();
+        main_room.checkWeather(database,viewController);
+        viewController.setBack();
     }
 
 }

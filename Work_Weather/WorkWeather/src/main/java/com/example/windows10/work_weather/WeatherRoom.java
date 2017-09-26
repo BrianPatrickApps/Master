@@ -40,7 +40,6 @@ public class WeatherRoom extends AppCompatActivity {
         tableView.setSwipeToRefreshEnabled( true );
         SimpleTableHeaderAdapter simpleTableHeaderAdapter = new SimpleTableHeaderAdapter(this,headerData);
         tableView.setHeaderAdapter(simpleTableHeaderAdapter);
-//        ImageView weather = (ImageView)findViewById(R)
 
     }
 
