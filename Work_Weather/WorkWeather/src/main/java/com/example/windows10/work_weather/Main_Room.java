@@ -397,7 +397,7 @@ public class Main_Room extends AppCompatActivity
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
+
     private void showNurses(){
         int reDo =db.doOver(idNow);
         if(reDo == 1)
