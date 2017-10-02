@@ -22,13 +22,12 @@ import com.bumptech.glide.Glide;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.*;
 
 public class Main_Room extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener ,Serializable{
     /**
-     * @param db the Database object controlling all the SQLite database.
+     * @param database the Database object controlling all the SQLite database.
      * @param inputOverlay holds image of the input for users to pick.
      * @param rainOverlay holds image of the gif to show rain.
      * @param weatherOverlay holds images of the weather corresponding to the median of the room.
@@ -47,7 +46,7 @@ public class Main_Room extends AppCompatActivity
      * @param counter Object that keeps count of the number of users that are being displayed.
      *
      */
-    private Database db;
+    private Database database;
     private ButtonController control;
     private ViewController viewController;
     private boolean sub = false;
@@ -65,6 +64,7 @@ public class Main_Room extends AppCompatActivity
 
     private ArrayList<ImageView> nurseArray;
     private Counter counter;
+    private Map<String,Integer> nurseMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +74,8 @@ public class Main_Room extends AppCompatActivity
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         counter = new Counter();
-        db = new Database(this);
-        Log.d("Main_Room","App has started, the shift number is " + db.getShiftNumber());
+        database = new Database(this);
+        Log.d("Main_Room","App has started, the shift number is " + database.getShiftNumber());
 
         AlarmController alarmController = new AlarmController(this);
         alarmController.startAlarms();
@@ -128,12 +128,12 @@ public class Main_Room extends AppCompatActivity
         nurseArray.add(nurse5);
         nurseArray.add(nurse6);
         nurseArray.add(nurse7);
-
+        nurseMap = new HashMap<>();
         Calendar c = Calendar.getInstance();
 
         @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
         String formattedDate = df.format(c.getTime());
-        db.updateDate(formattedDate);
+        database.updateDate(formattedDate);
 
         View header = navigationView.getHeaderView(0);
         ImageView nurseButton = (ImageView)header.findViewById(R.id.TUNURSE);
@@ -178,12 +178,12 @@ public class Main_Room extends AppCompatActivity
                         startActivity(i);
                     }
                     else if (which ==2){
-                        db.saveDB();
+                        database.saveDB();
                         Toast.makeText(getApplicationContext(), "DB Saved", Toast.LENGTH_LONG).show();
                     }
                     else if (which ==3){
-                        db.updateShift();
-                        Toast.makeText(getApplicationContext(), "Shift has been updated to " + db.getShiftNumber(), Toast.LENGTH_LONG).show();
+                        database.updateShift();
+                        Toast.makeText(getApplicationContext(), "Shift has been updated to " + database.getShiftNumber(), Toast.LENGTH_LONG).show();
                         Intent i = new Intent();
                         i.setClass(getApplicationContext(), Main_Room.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -399,10 +399,10 @@ public class Main_Room extends AppCompatActivity
 
 
     private void showNurses(){
-        int reDo =db.doOver(idNow);
-        if(reDo == 1)
-            changeMind();
-        else if(reDo == 0) {
+        int nurseFeelingsChanged = database.doOver(idNow);
+        if(nurseFeelingsChanged == 1)
+            feelingChanged();
+        else if(nurseFeelingsChanged == 0) {
             Log.d("Main_Room","new Nurse is being displayed");
             ImageView nurseView = nurseArray.get(counter.getCount());
             //starts setting nurses invisible manually if the max is visible.
@@ -443,7 +443,7 @@ public class Main_Room extends AppCompatActivity
         }
     }
 
-    private void changeMind(){
+    private void feelingChanged(){
         if(counter.getCount() == 0 && !sub) {
             Log.d("Main_Room","This ID is already in the Database but the room is empty: "+idNow);
             ImageView nurseView = nurseArray.get(counter.getCount());
@@ -451,21 +451,19 @@ public class Main_Room extends AppCompatActivity
             counter.setCount();
         }
         else if(counter.getCount() > 0){
-            counter.removeCount();
-            final ImageView nurseView = nurseArray.get(counter.getCount());
-            nurseView.setVisibility(View.GONE);
+            String nurseId = control.id();
+            final int newCount = getNurseCount(nurseId);
+            final ImageView nurseView = nurseArray.get(newCount);
+            getTimer(newCount).maxedReached();
+            getTimer(newCount).closeNurseImage();
+
             Log.d("Main_Room","This ID is already in the Database no timer will be called: "+ idNow);
-            final ImageView nurseImage = nurseArray.get(counter.getCount());
             //starts setting nurses invisible manually if the max is visible.
             if (!sub) { //boolean check to see if mx number of nurses already visible
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
                         viewController.fadeTheImage(nurseView,1,0,View.VISIBLE);
-                    }
-                },1000);
-                counter.setCount();
+                        setTimer(nurseView,newCount);
+                        getTimer(newCount).startTimer();
+                        counter.setCount();
                 if (counter.getCount() == nurseArray.size()) {
                     counter.resetCount();
                     sub = true;
@@ -500,11 +498,10 @@ public class Main_Room extends AppCompatActivity
 
     private void clearScreen(){
         if(counter.getCount() ==0)
-            db.dbClearScreen();
+            database.dbClearScreen();
         else
             Log.d("Main_Room","clearScreen() "+"There are no outlying inputs");
     }
-
 
     private void setTimer(View v,int countDownID) {
         Log.d("Main_Room","setTimer is starting: " + countDownID);
@@ -512,36 +509,43 @@ public class Main_Room extends AppCompatActivity
             final ImageView iv = (ImageView) v;
             final String nurseId = control.id();
             nurseTimer1 = new NurseTimer(iv,nurseId,this,viewController);
+            addToMap(nurseId,countDownID);
         }
         else if (countDownID ==1){
             final ImageView iv = (ImageView) v;
             final String nurseId = control.id();
             nurseTimer2 = new NurseTimer(iv,nurseId,this,viewController);
+            addToMap(nurseId,countDownID);
         }
         else if (countDownID ==2){
             final ImageView iv = (ImageView) v;
             final String nurseId = control.id();
             nurseTimer3 = new NurseTimer(iv,nurseId,this,viewController);
+            addToMap(nurseId,countDownID);
         }
         else if (countDownID ==3){
             final ImageView iv = (ImageView) v;
             final String nurseId = control.id();
             nurseTimer4 = new NurseTimer(iv,nurseId,this,viewController);
+            addToMap(nurseId,countDownID);
         }
         else if (countDownID ==4){
             final ImageView iv = (ImageView) v;
             final String nurseId = control.id();
             nurseTimer5 = new NurseTimer(iv,nurseId,this,viewController);
+            addToMap(nurseId,countDownID);
         }
         else if (countDownID ==5){
             final ImageView iv = (ImageView) v;
             final String nurseId = control.id();
             nurseTimer6 = new NurseTimer(iv,nurseId,this,viewController);
+            addToMap(nurseId,countDownID);
         }
         else if (countDownID ==6){
             final ImageView iv = (ImageView) v;
             final String nurseId = control.id();
             nurseTimer7 = new NurseTimer(iv,nurseId,this,viewController);
+            addToMap(nurseId,countDownID);
         }
     }
 
@@ -567,4 +571,15 @@ public class Main_Room extends AppCompatActivity
         }
         return null;
     }
+
+    private void addToMap(String nurseId,int counter){
+        nurseMap.put(nurseId,counter);
+    }
+
+    private int getNurseCount(String nurseId){
+        int count = nurseMap.get(nurseId);
+        return count;
+    }
+
+
 }
