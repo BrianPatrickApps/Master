@@ -1,6 +1,5 @@
 package com.example.windows10.work_weather;
 
-
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,7 +7,6 @@ import android.media.MediaScannerConnection;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Serializable;
@@ -17,18 +15,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
-public class Database implements Serializable{
+class Database implements Serializable{
 
     private DatabaseHelper dbHelper;
     private SQLiteDatabase database;
     private Context context;
 
-    public Database(Context context){
+    Database(Context context){
         this.context = context;
         dbHelper = new DatabaseHelper(context);
         database = dbHelper.getWritableDatabase();
     }
-
 
     void execSQL(String query) {
         database.execSQL(query);
@@ -126,12 +123,10 @@ public class Database implements Serializable{
         ArrayList<Double> collectedMedians = new ArrayList<>();
         Cursor getMedianCursor = database.rawQuery("Select * from avgRoom where key_id = '"+getShiftNumber()+
                 "'AND inputDate ='"+ getDay()+ "';",null);
-        if(getMedianCursor.getCount() ==0){
+        if(getMedianCursor.getCount() ==0)
             return 0.0;
-        }
         else{
-            while(getMedianCursor.moveToNext())
-            {
+            while(getMedianCursor.moveToNext()) {
                 Double median = getMedianCursor.getDouble(1);
                 collectedMedians.add(median);
             }
@@ -258,47 +253,25 @@ public class Database implements Serializable{
         }
     }
 
-    int doOver(String id){
-        int redo;
-        Cursor doOverCursor =database.rawQuery("Select id from nurses where changed = '"+0+"'AND inputDate ='"+ getDay()+"'AND id ='"+ id+ "' AND shift_id ='"+ getShiftNumber() +"';",null);
-        ArrayList<Integer>collectedInput = new ArrayList<>();
-
-        while(doOverCursor.moveToNext()){
-            int column = doOverCursor.getInt(0);
-            collectedInput.add(column);
-        }
-
-        if(collectedInput.size() > 0)
-            redo =1;
-        else
-            redo =0;
-
-        doOverCursor.close();
-        Log.d("Database","doOver() "+"reDo output is "+ redo+ ", There is already: "+ collectedInput.size() + " ID is " + id);
-        return redo;
-    }
-
     int factCheck(String id){
         int factCheck;
-        Cursor factCheckCursor = database.rawQuery("Select COUNT(id) from nurses where id = '"+id+"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';",null);
+        Cursor factCheckCursor = database.rawQuery("Select COUNT(id) from nurses where id = '"+id+"' AND inputDate ='"+
+                getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';",null);
         ArrayList<Integer>collectedInput = new ArrayList<>();
-
         while(factCheckCursor.moveToNext()){
             int a = factCheckCursor.getInt(0);
             collectedInput.add(a);
         }
-
         if(collectedInput.get(0) > 0)
             factCheck =1;
         else
             factCheck =0;
-
         factCheckCursor.close();
         Log.d("Database","factCheck() "+"factCheck output is "+ factCheck+ ", There is already: "+ collectedInput.get(0) + " ID is " + id);
         return factCheck;
     }
 
-    void changedMind(String id){
+     void changedMind(String id){
         database.execSQL("UPDATE nurses set changed = '"+ 1 + "' where id= '"+
                 id +"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';");
         Log.d("Database","changedMind() "+"changedMind is called");
@@ -312,11 +285,15 @@ public class Database implements Serializable{
             previousRoomNurses.add(dbClearScreenCursor.getInt(0));
         }
         dbClearScreenCursor.close();
-        for(int i=0;i<previousRoomNurses.size();i++)
-        {
+        for(int i=0;i<previousRoomNurses.size();i++) {
             Log.d("Database","dbClearScreen() "+"aList:"+ i +" id is: " +previousRoomNurses.get(i));
-            database.execSQL("UPDATE nurses set changed = '"+ 1 + "' where id= '"+previousRoomNurses.get(i)+"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';");
-            Log.d("Database","dbClearScreen() "+"UPDATE nurses set changed = '"+ 1 + "' where id= '"+previousRoomNurses.get(i)+"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';");
+            database.execSQL("UPDATE nurses set changed = '"+ 1 + "' where id= '"+previousRoomNurses.get(i)
+                    +"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';");
+            Log.d("Database","dbClearScreen() "+"UPDATE nurses set changed = '"+
+                    1 + "' where id= '"+previousRoomNurses.get(i)+"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';");
         }
     }
+     void closeDatabase(){
+        database.close();
+     }
 }

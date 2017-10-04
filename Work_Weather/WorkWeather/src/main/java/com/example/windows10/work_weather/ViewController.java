@@ -35,13 +35,14 @@ class ViewController implements Serializable{
 
     void viewInput(){
         inputScreen.setVisibility(View.VISIBLE);
+        inputOverlay.setVisibility(View.VISIBLE);
     }
 
     private void setRain(){
         fadeTheImage(rainOverlay,0,1,View.VISIBLE);
     }
 
-    void stopRain(){
+    private void stopRain(){
         rainOverlay.setVisibility(View.GONE);
     }
 
@@ -49,18 +50,21 @@ class ViewController implements Serializable{
         fadeTheImage(weatherOverlay,0,1,View.VISIBLE);
         weatherOverlay.setImageResource(R.drawable.weather_sun);
         mainScreen.setBackgroundResource(R.drawable.background5_sunny);
+        stopRain();
     }
 
     void showClouds(){
         fadeTheImage(weatherOverlay,0,1,View.VISIBLE);
         weatherOverlay.setImageResource(R.drawable.weather_halfclouds);
         mainScreen.setBackgroundResource(R.drawable.background4_semi_clouded);
+        stopRain();
     }
 
     void showOvercast(){
         fadeTheImage(weatherOverlay,0,1,View.VISIBLE);
         weatherOverlay.setImageResource(R.drawable.weather_clouds);
         mainScreen.setBackgroundResource(R.drawable.background3_clouded);
+        stopRain();
     }
 
     void showRainMood(){
@@ -86,9 +90,10 @@ class ViewController implements Serializable{
 
     void setBack(){
         inputOverlay.setImageResource(R.drawable.input_1);
+        inputOverlay.setVisibility(View.GONE);
     }
 
-    void fadeOut()
+    private void fadeOut()
     {
         Animation fadeOut = new AlphaAnimation(1, 0);
         fadeOut.setInterpolator(new AccelerateInterpolator());
@@ -123,7 +128,6 @@ class ViewController implements Serializable{
         fadeOut();
         setBack();
         viewNurses();
-
     }
 
 }
