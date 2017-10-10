@@ -7,7 +7,7 @@ import android.util.Log;
 
 class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "Hospital_Data";
+    private static final String DATABASE_NAME = "Hospital_Data_DDW";
 
     private static final int DATABASE_VERSION = 2;
 

@@ -252,24 +252,31 @@ public class Main_Room extends AppCompatActivity
     private void loginID(){
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("Login with ID");
-        alert.setMessage("Please use your 6 digit code");
+//        alert.setMessage("Please use your 6 digit code");
+        alert.setMessage("Please Enter your Name");
         alert.setCancelable(false);
         final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_NUMBER);
-        input.setFilters(new InputFilter[] { new InputFilter.LengthFilter(6)});
+//        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+//        input.setFilters(new InputFilter[] { new InputFilter.LengthFilter(6)});
         alert.setView(input);
         setViewable();
         viewController.viewInput();
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 try {
-                    if(input.getText().toString().length() ==6)
+//                    if(input.getText().toString().length() ==6)
                         idNow = input.getText().toString();
-
-                    else {
-                        Toast.makeText(getApplicationContext(), "Must be 6 digits", Toast.LENGTH_SHORT).show();
-                        loginID();
+                    String[] arr = idNow.split(" ");
+                    StringBuffer sb = new StringBuffer();
+                    for (String anArr : arr) {
+                        sb.append(Character.toUpperCase(anArr.charAt(0)))
+                                .append(anArr.substring(1)).append(" ");
                     }
+                    idNow = sb.toString().trim();
+//                    else {
+//                        Toast.makeText(getApplicationContext(), "Must be 6 digits", Toast.LENGTH_SHORT).show();
+//                        loginID();
+//                    }
                 } catch (Exception e) {
                     Toast.makeText(getApplicationContext(), "\t\t\tSorry invalid input\nonly 6 digits are acceptable", Toast.LENGTH_LONG).show();
                     loginID();
