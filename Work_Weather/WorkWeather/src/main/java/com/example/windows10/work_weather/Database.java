@@ -56,28 +56,28 @@ class Database implements Serializable{
 
     //Gets the median
     double getAverage(double mood){
-        Cursor gotAverages = database.rawQuery("Select * from nurses WHERE shift_id = '"+ getShiftNumber()+"' AND inputDate ='"+ getDay()+
+        Cursor roomMedianCursor = database.rawQuery("Select * from nurses WHERE shift_id = '"+ getShiftNumber()+"' AND inputDate ='"+ getDay()+
                 "' AND changed ='"+ 0 +"';",null);
-        ArrayList<Double> collectedAverage = new ArrayList<>();
-        if(gotAverages ==null){
-            Log.d("Database","getAverage() Empty");
-            return 0;
+        ArrayList<Double> collectedRoomMedian = new ArrayList<>();
+        if(roomMedianCursor.getCount() ==0){
+            Log.d("Database","getRoomMedian() "+"Empty");
+            return mood;
         }
         else {
-            while (gotAverages.moveToNext()) {
-                Double result = gotAverages.getDouble(1);
-                collectedAverage.add(result);
+            while (roomMedianCursor.moveToNext()) {
+                Double result = roomMedianCursor.getDouble(1);
+                collectedRoomMedian.add(result);
             }
-            collectedAverage.add(mood);
-            Collections.sort(collectedAverage);
+            collectedRoomMedian.add(mood);
+            Collections.sort(collectedRoomMedian);
             double median;
-            if (collectedAverage.size() % 2 == 0) {
-                median = (collectedAverage.get(collectedAverage.size() / 2) + collectedAverage.get(collectedAverage.size() / 2 - 1)) / 2;
+            if (collectedRoomMedian.size() % 2 == 0) {
+                median = (collectedRoomMedian.get(collectedRoomMedian.size() / 2) + collectedRoomMedian.get(collectedRoomMedian.size() / 2 - 1)) / 2;
             } else {
-                median = collectedAverage.get(collectedAverage.size() / 2);
+                median = collectedRoomMedian.get(collectedRoomMedian.size() / 2);
             }
-            Log.d("Database", "getAverage() " + collectedAverage.size() + " size of the sample size, " + "Cursor size: " + gotAverages.getCount());
-            gotAverages.close();
+            Log.d("Database", "getAverage() " + collectedRoomMedian.size() + " size of the sample size, " + "Cursor size: " + roomMedianCursor.getCount());
+            roomMedianCursor.close();
             return median;
         }
     }
@@ -247,6 +247,38 @@ class Database implements Serializable{
             String query2 = "UPDATE counter set key_id = '"+(getCountNumber()+1)+"' WHERE key_id ='"+getCountNumber()+"';";
             execSQL(query2);
             Log.d("Database","saveDB() "+"Counter has been updated: "+ getCountNumber());
+        }
+        catch (Exception sqlEx) {
+            Log.d("Database", "saveDB() "+sqlEx.getMessage()+ "Exception", sqlEx);
+        }
+        saveDBMedian();
+    }
+
+    void saveDBMedian() {
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        File exportDirectory = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),"WorkWeather");
+        if (!exportDirectory.exists()) {
+            //noinspection ResultOfMethodCallIgnored
+            exportDirectory.mkdirs();
+        }
+        Log.d("Database","saveDB() "+exportDirectory.toString());
+        File file = new File(exportDirectory, currentDateTimeString+ " " +getCountNumber()+" Medians" +".csv");
+        Log.d("Database","saveDB() "+file.toString());
+        try {
+            //noinspection ResultOfMethodCallIgnored
+            file.createNewFile();
+            CSVWriter csvWriter = new CSVWriter(new FileWriter(file));
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            Cursor csvCursor = db.rawQuery("SELECT * FROM avgShift", null);
+            csvWriter.writeNext(csvCursor.getColumnNames());
+            while (csvCursor.moveToNext()) {
+                String csvStrings[] = {csvCursor.getString(0), csvCursor.getString(1), csvCursor.getString(2)};
+                csvWriter.writeNext(csvStrings);
+                Log.d("Database","saveDB() "+csvStrings[0]);
+            }
+            csvWriter.close();
+            csvCursor.close();
+            MediaScannerConnection.scanFile(context, new String[] {exportDirectory.toString()}, null, null);
         }
         catch (Exception sqlEx) {
             Log.d("Database", "saveDB() "+sqlEx.getMessage()+ "Exception", sqlEx);

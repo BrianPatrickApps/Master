@@ -18,7 +18,8 @@ public class DataScreen extends AppCompatActivity {
 
         Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/Futura Medium.ttf");
         Database database = new Database(this);
-        Double databaseMedian = database.getMedian();
+//        Double databaseMedian = database.getMedian();
+        Double databaseMedian = database.getRoomMedian();
         int databaseShiftNumber = database.getShiftNumber();
         String databaseDay = database.getDay();
 

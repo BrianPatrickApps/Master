@@ -263,9 +263,9 @@ public class Main_Room extends AppCompatActivity
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 try {
-                    if(input.getText().toString().length() ==6) {
+                    if(input.getText().toString().length() ==6)
                         idNow = input.getText().toString();
-                    }
+
                     else {
                         Toast.makeText(getApplicationContext(), "Must be 6 digits", Toast.LENGTH_SHORT).show();
                         loginID();
@@ -317,6 +317,7 @@ public class Main_Room extends AppCompatActivity
                 setTimer(nurseView,counter.getCount());
                 getTimer(counter.getCount()).startTimer();
                 counter.setCount();
+                checkWeather();
                 if (counter.getCount() == nurseArray.size()) {
                     sub = true;
                     counter.resetCount();
@@ -328,8 +329,9 @@ public class Main_Room extends AppCompatActivity
     private void maxedNurses(){
         if(sub){
             NurseTimer oldNurse = getTimer(counter.getCount());
-            oldNurse.maxedReached();
-            database.changedMind(oldNurse.getNurseId());
+            if (oldNurse != null) {
+                oldNurse.maxedReached();
+            }
             final ImageView newNurse = nurseArray.get(counter.getCount());
             newNurse.setVisibility(View.GONE);
             Handler handler = new Handler();
@@ -342,6 +344,7 @@ public class Main_Room extends AppCompatActivity
             setTimer(newNurse,counter.getCount());
             getTimer(counter.getCount()).startTimer();
             counter.setCount();
+            checkWeather();
             if (counter.getCount() == nurseArray.size()) {
                 counter.resetCount();
                 Log.d("Main_Room","NurseArray has been reset");
@@ -362,13 +365,13 @@ public class Main_Room extends AppCompatActivity
             final int newCount = nurseMap.get(idNow);
             final ImageView nurseView = nurseArray.get(newCount);
             getTimer(newCount).maxedReached();
-            database.changedMind(getTimer(newCount).getNurseId());
+//            database.changedMind(getTimer(newCount).getNurseId());
             Log.d("Main_Room","feelingChanged new Nurse: "+ idNow);
             if (!sub) { //boolean check to see if mx number of nurses already visible
-                        viewController.fadeTheImage(nurseView,1,0,View.VISIBLE);
-                        setTimer(nurseView,newCount);
-                        getTimer(newCount).startTimer();
-//                        counter.setCount();
+                    viewController.fadeTheImage(nurseView,1,0,View.VISIBLE);
+                    setTimer(nurseView,newCount);
+                    getTimer(newCount).startTimer();
+                    checkWeather();
                 if (counter.getCount() == nurseArray.size()) {
                     counter.resetCount();
                     sub = true;
@@ -538,33 +541,31 @@ public class Main_Room extends AppCompatActivity
 
     private void setFinishedInput() {
         String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        final int factCheck = database.factCheck(idNow);
+        if(factCheck == 1) {
+            Log.d("Main_Room","factCheck is 1");
+            database.changedMind(idNow);
+        }
+        else if(factCheck == 0)
+            Log.d("Main_Room","factCheck is 0");
         Double avg = database.getAverage(mood);
         final String query = "INSERT into nurses(`id`,`input`,`median`,`date`,`shift_id`,`inputDate`,`changed`)" +
                 "VALUES('" + idNow + "','"+ mood +"','"+ avg +"','"+ currentDateTimeString +"','"+ database.getShiftNumber()+"','"+
                 database.getDay()+"','"+ 0 +"');";
         database.addMedian(avg,currentDateTimeString,database.getShiftNumber());
-        final int factCheck = database.factCheck(idNow);
-        if(factCheck == 1) {
-            Log.d("Main_Room","factCheck is 1");
-            database.changedMind(idNow);
-            database.execSQL(query);
-        }
-        else if(factCheck == 0) {
-            Log.d("Main_Room","factCheck is 0");
-            database.execSQL(query);
-        }
+        database.execSQL(query);
         setInvisible();
         viewController.afterInput();
         checkWeather();
         boolean found = nurseMap.containsKey(idNow);
-                if(found) {
-                    Log.d("Main_Room","already here " + true);
-                    feelingChanged();
-                    }
-                    else{
-                    Log.d("Main_Room","not here here " + false);
-                    showNurses();
-                }
+            if(found) {
+                Log.d("Main_Room","already here " + true);
+                feelingChanged();
+            }
+            else{
+                Log.d("Main_Room","not here here " + false);
+                showNurses();
+            }
     }
 
 }
