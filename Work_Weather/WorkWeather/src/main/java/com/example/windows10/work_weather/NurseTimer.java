@@ -37,8 +37,5 @@ class NurseTimer {
         nurseImage.setVisibility(View.GONE);
         Log.d("NurseTimer","nurse is closed and timer is cleared: " + nurseId);
     }
-    String getNurseId(){
-        return nurseId;
-    }
 
 }

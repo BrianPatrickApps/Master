@@ -70,8 +70,8 @@ class ViewController implements Serializable{
     void showRainMood(){
         fadeTheImage(weatherOverlay,0,1,View.VISIBLE);
         weatherOverlay.setImageResource(R.drawable.weather_rain);
-        setRain();
         mainScreen.setBackgroundResource(R.drawable.background2_rain);
+        setRain();
     }
 
     void showThunder(){

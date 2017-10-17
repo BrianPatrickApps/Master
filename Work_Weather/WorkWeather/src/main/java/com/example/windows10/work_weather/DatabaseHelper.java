@@ -15,7 +15,6 @@ class DatabaseHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    // Method is called during creation of the database
     @Override
     public void onCreate(SQLiteDatabase database) {
 

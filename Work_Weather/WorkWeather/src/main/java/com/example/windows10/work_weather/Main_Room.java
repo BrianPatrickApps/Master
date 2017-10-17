@@ -119,8 +119,8 @@ public class Main_Room extends AppCompatActivity
         nurseArray.add(nurse6);
         nurseArray.add(nurse7);
         nurseMap = new HashMap<>();
-        Calendar c = Calendar.getInstance();
 
+        Calendar c = Calendar.getInstance();
         @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
         String formattedDate = df.format(c.getTime());
         database.updateDate(formattedDate);
@@ -265,7 +265,6 @@ public class Main_Room extends AppCompatActivity
                 try {
                     if(input.getText().toString().length() ==6)
                         idNow = input.getText().toString();
-
                     else {
                         Toast.makeText(getApplicationContext(), "Must be 6 digits", Toast.LENGTH_SHORT).show();
                         loginID();
@@ -365,7 +364,6 @@ public class Main_Room extends AppCompatActivity
             final int newCount = nurseMap.get(idNow);
             final ImageView nurseView = nurseArray.get(newCount);
             getTimer(newCount).maxedReached();
-//            database.changedMind(getTimer(newCount).getNurseId());
             Log.d("Main_Room","feelingChanged new Nurse: "+ idNow);
             if (!sub) { //boolean check to see if mx number of nurses already visible
                     viewController.fadeTheImage(nurseView,1,0,View.VISIBLE);
@@ -567,5 +565,4 @@ public class Main_Room extends AppCompatActivity
                 showNurses();
             }
     }
-
 }

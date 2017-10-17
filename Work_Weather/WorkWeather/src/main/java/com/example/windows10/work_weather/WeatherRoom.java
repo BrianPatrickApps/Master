@@ -1,20 +1,17 @@
 package com.example.windows10.work_weather;
 
-import android.annotation.SuppressLint;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-
-import java.util.ArrayList;
-
 import de.codecrafters.tableview.TableView;
 import de.codecrafters.tableview.model.TableColumnPxWidthModel;
 import de.codecrafters.tableview.toolkit.SimpleTableDataAdapter;
 import de.codecrafters.tableview.toolkit.SimpleTableHeaderAdapter;
 
+import java.util.ArrayList;
+
 public class WeatherRoom extends AppCompatActivity {
 
-    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +26,7 @@ public class WeatherRoom extends AppCompatActivity {
             array[i] = theArray.get(i);
         }
         String[] headerData = { "Id","Input","Median","Date","Shift"};
-        //noinspection unchecked
+        @SuppressWarnings("unchecked")
         TableView<String[]> tableView = (TableView<String[]>) findViewById(R.id.tableView);
         tableView.setDataAdapter(new SimpleTableDataAdapter(this, array));
         tableView.setHeaderBackground(R.drawable.side_nav_bar);
@@ -37,7 +34,7 @@ public class WeatherRoom extends AppCompatActivity {
         TableColumnPxWidthModel columnModel = new TableColumnPxWidthModel(5, 200);
         columnModel.setColumnWidth(3,450);
         tableView.setColumnModel(columnModel);
-        tableView.setSwipeToRefreshEnabled( true );
+        tableView.setSwipeToRefreshEnabled(false);
         SimpleTableHeaderAdapter simpleTableHeaderAdapter = new SimpleTableHeaderAdapter(this,headerData);
         tableView.setHeaderAdapter(simpleTableHeaderAdapter);
 
