@@ -41,4 +41,8 @@ class NurseTimer {
         return nurseId;
     }
 
+    void changeInput(){
+//        nurseImage.setImageDrawable(R.drawable.);
+    }
+
 }
