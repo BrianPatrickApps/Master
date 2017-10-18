@@ -41,7 +41,7 @@
                 app:srcCompat="@drawable/newnurse5"
                 tools:layout_constraintLeft_creator="1"
                 tools:layout_constraintTop_creator="1"
-                tools:ignore="ContentDescription,ObsoleteLayoutParam,RtlHardcoded" />
+                tools:ignore="ContentDescription,ObsoleteLayoutParam,RtlHardcoded"/>
 
         <ImageView
                 android:id="@+id/nurse7"
@@ -63,7 +63,7 @@
                 tools:layout_constraintBottom_creator="1"
                 tools:layout_constraintRight_creator="1"
                 tools:ignore="ObsoleteLayoutParam,RtlHardcoded"
-                android:contentDescription="@+id/nurse7" />
+                android:contentDescription="@+id/nurse7"/>
 
         <ImageView
                 android:id="@+id/nurse1"
@@ -75,7 +75,7 @@
                 android:scaleType="fitXY"
                 android:visibility="gone"
                 app:srcCompat="@drawable/newnurse1"
-                android:contentDescription="@+id/nurse1" />
+                android:contentDescription="@+id/nurse1"/>
 
         <ImageView
                 android:id="@+id/nurse4"

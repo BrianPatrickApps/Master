@@ -316,6 +316,22 @@ public class Main_Room extends AppCompatActivity
             viewController.startUp();
     }
 
+    //Change at x.6 to x+1.6
+    //new 1 background
+    //Calculate mean
+    //new how do you feel
+    //no id just simple version
+    //8th person reset new db table that holds them or turn everything off, turn off timers no need for alarms
+    //no need to save database
+
+
+    //Hospital
+    //mean
+    //new background
+    //round
+    //if someone puts 1 or 2 new nurse image
+    // new nurses
+
     private void showNurses(){
             Log.d("Main_Room","new Nurse is being displayed");
             ImageView nurseView = nurseArray.get(counter.getCount());
@@ -511,6 +527,8 @@ public class Main_Room extends AppCompatActivity
             setFinishedInput();
         }
     };
+
+    //Calculate the mean
 
     private void setViewable() {
         stormy.setVisibility(View.VISIBLE);
