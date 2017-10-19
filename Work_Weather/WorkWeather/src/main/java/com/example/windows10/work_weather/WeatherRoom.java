@@ -23,15 +23,15 @@ public class WeatherRoom extends AppCompatActivity {
 
         Database db = new Database(this);
 
-        ArrayList<String[]> theArray = db.collectFormattedUsers();
-        String[][] array = new String[theArray.size()][];
-        for (int i = 0; i < theArray.size(); i++) {
-            array[i] = theArray.get(i);
+        ArrayList<String[]> collectFormattedUsers = db.collectFormattedUsers();
+        String[][] usersArray = new String[collectFormattedUsers.size()][];
+        for (int i = 0; i < collectFormattedUsers.size(); i++) {
+            usersArray[i] = collectFormattedUsers.get(i);
         }
         String[] headerData = {"Input","Mean","Date","Shift"};
         //noinspection unchecked
         TableView<String[]> tableView = (TableView<String[]>) findViewById(R.id.tableView);
-        tableView.setDataAdapter(new SimpleTableDataAdapter(this, array));
+        tableView.setDataAdapter(new SimpleTableDataAdapter(this, usersArray));
         tableView.setHeaderBackground(R.drawable.side_nav_bar);
         tableView.setBackgroundResource(R.drawable.side_nav_bar_reverse);
         TableColumnPxWidthModel columnModel = new TableColumnPxWidthModel(4, 200);
@@ -40,7 +40,5 @@ public class WeatherRoom extends AppCompatActivity {
         tableView.setSwipeToRefreshEnabled(false);
         SimpleTableHeaderAdapter simpleTableHeaderAdapter = new SimpleTableHeaderAdapter(this,headerData);
         tableView.setHeaderAdapter(simpleTableHeaderAdapter);
-
     }
-
 }

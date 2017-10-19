@@ -19,30 +19,17 @@ class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase database) {
 
-//        String DATABASE_NURSES = ("CREATE TABLE IF NOT EXISTS nurses(id String,input INT,median DOUBLE,date String,shift_id INT,inputDate String,changed INT);");
-//        database.execSQL(DATABASE_NURSES);
-
         String DATABASE_NURSES = ("CREATE TABLE IF NOT EXISTS nurses(input INT,median DOUBLE,date String,shift_id INT,inputDate String);");
         database.execSQL(DATABASE_NURSES);
-
-        String DATABASE_AVG = ("CREATE TABLE IF NOT EXISTS avgShift(shift_id INT,average DOUBLE,inputDate String);");
-        database.execSQL(DATABASE_AVG);
-
-        String DATABASE_ROOM_AVG = ("CREATE TABLE IF NOT EXISTS avgRoom(key_id INT,median DOUBLE,inputDate String);");
-        database.execSQL(DATABASE_ROOM_AVG);
 
         String DATABASE_KEY = ("CREATE TABLE IF NOT EXISTS key(key_id INT);");
         database.execSQL(DATABASE_KEY);
 
-        String DATABASE_Counter = ("CREATE TABLE IF NOT EXISTS counter(key_id INT);");
-        database.execSQL(DATABASE_Counter);
+        String DATABASE_COUNTER = ("CREATE TABLE IF NOT EXISTS counter(key_id INT);");
+        database.execSQL(DATABASE_COUNTER);
 
-        String DATABASE_DayTracker = ("CREATE TABLE IF NOT EXISTS day(key_id INT,inputDate String);");
-        database.execSQL(DATABASE_DayTracker);
-
-        database.execSQL("INSERT INTO avgRoom VALUES('0','0','');");
-        database.execSQL("INSERT INTO avgRoom VALUES('1','0','');");
-        database.execSQL("INSERT INTO avgRoom VALUES('2','0','');");
+        String DATABASE_DAY_TRACKER = ("CREATE TABLE IF NOT EXISTS day(key_id INT,inputDate String);");
+        database.execSQL(DATABASE_DAY_TRACKER);
 
         database.execSQL("INSERT INTO day VALUES('0','');");
         database.execSQL("INSERT INTO key VALUES('0');");
@@ -53,7 +40,7 @@ class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion){
         Log.d("Database_Helper",
                 "Upgrading database from " + oldVersion +" to "+newVersion);
-        database.execSQL("DROP TABLE IF EXISTS users");
+        database.execSQL("DROP TABLE IF EXISTS "+ DATABASE_NAME);
         onCreate(database);
     }
 }

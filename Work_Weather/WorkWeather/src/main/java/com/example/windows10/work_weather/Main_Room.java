@@ -18,7 +18,6 @@ import android.view.*;
 import android.widget.*;
 import com.bumptech.glide.Glide;
 
-import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,11 +25,11 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class Main_Room extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener ,Serializable{
+        implements NavigationView.OnNavigationItemSelectedListener{
 
     private Database database;
     private ViewController viewController;
-    private boolean sub = false;
+    private boolean fullRoom = false;
     private ArrayList<ImageView> nurseArray;
     private Counter counter;
 
@@ -121,7 +120,7 @@ public class Main_Room extends AppCompatActivity
     }
 
     private void nurseMenu(){
-            final String[] option = {"Data","Test","Save","Change"};
+            final String[] option = {"Data Table","Current Data","Save","Change"};
             ArrayAdapter<String> adapter = new ArrayAdapter<>(Main_Room.this,android.R.layout.select_dialog_item,option);
             AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(Main_Room.this, R.style.AlertDialogCustom));
             builder.setTitle("Please Select");
@@ -137,11 +136,12 @@ public class Main_Room extends AppCompatActivity
                     }
                     else if (which ==3){
                         database.updateShift();
-                        Toast.makeText(getApplicationContext(), "Shift has been updated to " + database.getShiftNumber(), Toast.LENGTH_LONG).show();
-                        Intent i = new Intent();
-                        i.setClass(getApplicationContext(), Main_Room.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        getApplicationContext().getApplicationContext().startActivity((i));
+                        Toast.makeText(getApplicationContext(), "Shift has been updated to " +
+                                database.getShiftNumber(), Toast.LENGTH_LONG).show();
+                        Intent restartIntent = new Intent();
+                        restartIntent.setClass(getApplicationContext(), Main_Room.class);
+                        restartIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        getApplicationContext().startActivity((restartIntent));
                         finish();
                         database.closeDatabase();
                     }
@@ -173,7 +173,6 @@ public class Main_Room extends AppCompatActivity
         return true;
     }
 
-    //Unused drawer method for settings
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -209,9 +208,9 @@ public class Main_Room extends AppCompatActivity
             public void onClick(DialogInterface dialog, int whichButton) {
                 try {
                     int id = Integer.parseInt(input.getText().toString());
-                    if (id == 0) {
+                    if (id == 0)
                         nurseMenu();
-                    } else
+                    else
                         Toast.makeText(getApplicationContext(), "Sorry wrong password", Toast.LENGTH_LONG).show();
                 } catch (Exception e) {
                     Toast.makeText(getApplicationContext(), "\t\t\tSorry invalid input", Toast.LENGTH_LONG).show();
@@ -228,18 +227,18 @@ public class Main_Room extends AppCompatActivity
     }
 
     private void checkWeather(){
-        Double x = database.getRoomMedian();
-        Log.d("Main_Room","Recalculation of the median is: "+ x);
-        if (x != 0.0) {
-            if(x >= 0.6 && x < 1.6)
+        Double roomMean = database.getRoomMedian();
+        Log.d("Main_Room","Recalculation of the mean is: "+ roomMean);
+        if (roomMean != 0.0) {
+            if(roomMean >= 0.6 && roomMean < 1.6)
                 viewController.showThunder();
-            else if(x >= 1.6 && x < 2.6)
+            else if(roomMean >= 1.6 && roomMean < 2.6)
                 viewController.showRainMood();
-            else if(x >= 2.6 && x < 3.6)
+            else if(roomMean >= 2.6 && roomMean < 3.6)
                 viewController.showOvercast();
-            else if(x >= 3.6 && x < 4.6)
+            else if(roomMean >= 3.6 && roomMean < 4.6)
                 viewController.showClouds();
-            else if(x >= 4.6 && x < 5.6)
+            else if(roomMean >= 4.6 && roomMean < 5.6)
                 viewController.showSun();
         } else
             viewController.startUp();
@@ -250,7 +249,7 @@ public class Main_Room extends AppCompatActivity
             ImageView nurseView = nurseArray.get(counter.getCount());
             if(mood == 1 || mood ==2) {
                 if(counter.getCount() ==0)
-                nurseView.setImageResource(R.drawable.nurse_1b);
+                    nurseView.setImageResource(R.drawable.nurse_1b);
                 else if(counter.getCount() ==1)
                     nurseView.setImageResource(R.drawable.nurse_2b);
                 else if(counter.getCount() ==2)
@@ -264,19 +263,18 @@ public class Main_Room extends AppCompatActivity
                 else
                     nurseView.setImageResource(R.drawable.nurse_7b);
             }
-
-            if (!sub) {
+            if (!fullRoom) {
                 nurseView.setVisibility(View.VISIBLE);
                 counter.setCount();
                 checkWeather();
                 if (counter.getCount() == nurseArray.size()) {
-                    sub = true;
+                    fullRoom = true;
                     counter.resetCount();
                 }
             }
             else{
                 for (ImageView aNurseArray : nurseArray) aNurseArray.setVisibility(View.GONE);
-                sub = false;
+                fullRoom = false;
                 nurseArray.get(counter.getCount()).setVisibility(View.VISIBLE);
                 database.dbClearScreen();
                 setFinishedInput();
@@ -359,11 +357,10 @@ public class Main_Room extends AppCompatActivity
 
     private void setFinishedInput() {
         String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-        Double avg = database.getAverage(mood);
+        Double currentAverage = database.getAverage(mood);
         final String query = "INSERT into nurses(`input`,`median`,`date`,`shift_id`,`inputDate`)" +
-                "VALUES('" + mood +"','"+ avg +"','"+ currentDateTimeString +"','"+ database.getShiftNumber()+"','"+
+                "VALUES('" + mood +"','"+ currentAverage +"','"+ currentDateTimeString +"','"+ database.getShiftNumber()+"','"+
                 database.getDay()+"');";
-        database.addMedian(avg,currentDateTimeString,database.getShiftNumber());
         database.execSQL(query);
         setInvisible();
         viewController.afterInput();
