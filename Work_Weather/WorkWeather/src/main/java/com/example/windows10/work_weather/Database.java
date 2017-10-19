@@ -74,15 +74,14 @@ class Database implements Serializable{
             collectedRoomMedian.add(mood);
             Collections.sort(collectedRoomMedian);
             double median = 0;
-            for(int i =0;i<collectedRoomMedian.size();i++){
-                median += collectedRoomMedian.get(i);
+            for (Double aCollectedRoomMedian : collectedRoomMedian) {
+                median += aCollectedRoomMedian;
             }
             median = median/collectedRoomMedian.size();
             Log.d("Database", "getAverage() " + collectedRoomMedian.size()
                     + " size of the sample size, " + "Cursor size: " + roomMedianCursor.getCount());
             roomMedianCursor.close();
             DecimalFormat df = new DecimalFormat("#.##");
-            parseDouble(df.format(median));
             return parseDouble(df.format(median));
         }
     }
@@ -102,15 +101,14 @@ class Database implements Serializable{
             }
             Collections.sort(collectedRoomMedian);
             double median = 0;
-            for(int i =0;i<collectedRoomMedian.size();i++){
-                median += collectedRoomMedian.get(i);
+            for (Double aCollectedRoomMedian : collectedRoomMedian) {
+                median += aCollectedRoomMedian;
             }
             median = median/collectedRoomMedian.size();
             Log.d("Database", "getRoomMedian() " + collectedRoomMedian.size()
                     + " size of the sample size, " + "Cursor size: " + roomMedianCursor.getCount());
             roomMedianCursor.close();
             DecimalFormat df = new DecimalFormat("#.##");
-            parseDouble(df.format(median));
             return parseDouble(df.format(median));
         }
     }
@@ -124,24 +122,6 @@ class Database implements Serializable{
                 getDay()+"' WHERE key_id = '"+getShiftNumber()+"';";
         database.execSQL(updateMedian);
         Toast.makeText(context, "Loading...", Toast.LENGTH_SHORT).show();
-    }
-
-    //Collects the median of the shift
-    double getMedian(){
-        ArrayList<Double> collectedMedians = new ArrayList<>();
-        Cursor getMedianCursor = database.rawQuery("Select * from avgRoom where key_id = '"+getShiftNumber()+
-                "'AND inputDate ='"+ getDay()+ "';",null);
-        if(getMedianCursor.getCount() ==0)
-            return 0.0;
-        else{
-            while(getMedianCursor.moveToNext()) {
-                Double median = getMedianCursor.getDouble(1);
-                collectedMedians.add(median);
-            }
-        }
-        getMedianCursor.close();
-        Log.d("Database",collectedMedians.get(0)+ "is the Median");
-        return collectedMedians.get(0);
     }
 
     //gets called when the broadcast receiver fires
@@ -296,25 +276,6 @@ class Database implements Serializable{
         }
     }
 
-    int factCheck(String id){
-        int factCheck;
-        Cursor factCheckCursor = database.rawQuery("Select COUNT(id) from nurses where id = '"+id+"' AND inputDate ='"+
-                getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';",null);
-        ArrayList<Integer>collectedInput = new ArrayList<>();
-        while(factCheckCursor.moveToNext()){
-            int a = factCheckCursor.getInt(0);
-            collectedInput.add(a);
-        }
-        if(collectedInput.get(0) > 0)
-            factCheck =1;
-        else
-            factCheck =0;
-        factCheckCursor.close();
-        Log.d("Database","factCheck() "+"factCheck output is "+ factCheck+ ", There is already: "+
-                collectedInput.get(0) + " ID is " + id);
-        return factCheck;
-    }
-
      void changedMind(String id){
         database.execSQL("UPDATE nurses set changed = '"+ 1 + "' where id= '"+
                 id +"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';");
@@ -327,7 +288,7 @@ class Database implements Serializable{
             database.execSQL("DELETE FROM nurses");
             Log.d("Main_Room","Cleared");
         }
-
+        dbClearScreenCursor.close();
     }
      void closeDatabase(){
         database.close();

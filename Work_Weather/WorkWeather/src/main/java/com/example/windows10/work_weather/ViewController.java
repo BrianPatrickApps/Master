@@ -28,7 +28,7 @@ class ViewController implements Serializable{
         this.inputOverlay = inputOverlay;
     }
 
-    void viewNurses() {
+    private void viewNurses() {
         nurse.setVisibility(View.VISIBLE);
         inputScreen.setVisibility(View.GONE);
     }
@@ -88,7 +88,7 @@ class ViewController implements Serializable{
         stopRain();
     }
 
-    void setBack(){
+    private void setBack(){
         inputOverlay.setImageResource(R.drawable.input_1);
         inputOverlay.setVisibility(View.GONE);
     }
