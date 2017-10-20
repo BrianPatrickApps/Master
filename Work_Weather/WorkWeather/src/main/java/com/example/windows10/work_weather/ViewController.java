@@ -13,7 +13,7 @@ class ViewController implements Serializable{
 
     private RelativeLayout mainScreen;
     @SuppressWarnings("deprecation")
-    private AbsoluteLayout nurseLayer;
+    private AbsoluteLayout nurse;
     private RelativeLayout inputScreen;
     private ImageView rainOverlay;
     private ImageView weatherOverlay;
@@ -22,20 +22,16 @@ class ViewController implements Serializable{
     ViewController(RelativeLayout mainScreen, @SuppressWarnings("deprecation") AbsoluteLayout nurse,
                    RelativeLayout inputScreen, ImageView rainOverlay, ImageView weatherOverlay,ImageView inputOverlay){
         this.mainScreen = mainScreen;
-        this.nurseLayer = nurse;
+        this.nurse = nurse;
         this.inputScreen = inputScreen;
         this.rainOverlay = rainOverlay;
         this.weatherOverlay = weatherOverlay;
         this.inputOverlay = inputOverlay;
     }
 
-<<<<<<< HEAD
-    private void viewNurses() {
-        nurseLayer.setVisibility(View.VISIBLE);
-=======
+
     void viewNurses() {
         nurse.setVisibility(View.VISIBLE);
->>>>>>> parent of 652c97a... Demo v2 B
         inputScreen.setVisibility(View.GONE);
     }
 

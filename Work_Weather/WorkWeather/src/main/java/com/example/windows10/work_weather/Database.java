@@ -68,26 +68,22 @@ class Database implements Serializable{
         }
         else {
             while (roomMedianCursor.moveToNext()) {
-                Double result = roomMedianCursor.getDouble(1);
+                Double result = roomMedianCursor.getDouble(0);
                 collectedDatabaseMean.add(result);
             }
             collectedDatabaseMean.add(mood);
             Collections.sort(collectedDatabaseMean);
             double median = 0;
-<<<<<<< HEAD
+
             for (Double aCollectedRoomMedian : collectedDatabaseMean) {
                 median += aCollectedRoomMedian;
-=======
-            for(int i =0;i<collectedRoomMedian.size();i++){
-                median += collectedRoomMedian.get(i);
->>>>>>> parent of 652c97a... Demo v2 B
             }
+
             median = median/collectedDatabaseMean.size();
             Log.d("Database", "getAverage() " + collectedDatabaseMean.size()
                     + " size of the sample size, " + "Cursor size: " + roomMedianCursor.getCount());
             roomMedianCursor.close();
             DecimalFormat df = new DecimalFormat("#.##");
-            parseDouble(df.format(median));
             return parseDouble(df.format(median));
         }
     }
@@ -102,18 +98,14 @@ class Database implements Serializable{
         }
         else {
             while (roomMedianCursor.moveToNext()) {
-                Double result = roomMedianCursor.getDouble(1);
+                Double result = roomMedianCursor.getDouble(0);
                 collectedRoomMean.add(result);
             }
             Collections.sort(collectedRoomMean);
             double median = 0;
-<<<<<<< HEAD
+
             for (Double aCollectedRoomMedian : collectedRoomMean) {
                 median += aCollectedRoomMedian;
-=======
-            for(int i =0;i<collectedRoomMedian.size();i++){
-                median += collectedRoomMedian.get(i);
->>>>>>> parent of 652c97a... Demo v2 B
             }
             median = median/collectedRoomMean.size();
             Log.d("Database", "getRoomMedian() " + collectedRoomMean.size()
@@ -125,8 +117,6 @@ class Database implements Serializable{
         }
     }
 
-<<<<<<< HEAD
-=======
     //Adds Median to avgShift and avgRoom
     void addMedian(double median, String date, int shift){
         String query = "INSERT into avgShift(`shift_id`,`average`,`inputDate`)" +
@@ -147,7 +137,7 @@ class Database implements Serializable{
             return 0.0;
         else{
             while(getMedianCursor.moveToNext()) {
-                Double median = getMedianCursor.getDouble(1);
+                Double median = getMedianCursor.getDouble(0);
                 collectedMedians.add(median);
             }
         }
@@ -157,7 +147,6 @@ class Database implements Serializable{
     }
 
     //gets called when the broadcast receiver fires
->>>>>>> parent of 652c97a... Demo v2 B
     void updateShift(){
         String query = "UPDATE key set key_id = '"+(getShiftNumber()+1)+"' WHERE key_id ='"+getShiftNumber()+"';";
         execSQL(query);
