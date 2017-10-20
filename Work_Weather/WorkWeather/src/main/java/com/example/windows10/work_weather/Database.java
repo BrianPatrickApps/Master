@@ -11,16 +11,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
-<<<<<<< HEAD
 import static java.lang.Double.parseDouble;
 
 @SuppressWarnings("unused")
-=======
->>>>>>> parent of 28876fa... Demo A
 class Database implements Serializable{
 
     private DatabaseHelper dbHelper;
@@ -38,7 +36,8 @@ class Database implements Serializable{
     }
 
     ArrayList<String[]> collectFormattedUsers(){
-        Cursor collectedFormattedUsers = database.rawQuery("Select * from nurses WHERE shift_id = '"+ getShiftNumber()+"' AND inputDate ='"+ getDay()+"';",null);
+        Cursor collectedFormattedUsers = database.rawQuery("Select * from nurses WHERE shift_id = '"
+                + getShiftNumber()+"' AND inputDate ='"+ getDay()+"';",null);
         ArrayList<String[]>theArray = new ArrayList<>();
         if(collectedFormattedUsers == null){
             Toast.makeText(context, "Empty", Toast.LENGTH_SHORT).show();
@@ -49,8 +48,7 @@ class Database implements Serializable{
                 String result = collectedFormattedUsers.getString(0) +
                             "/" + collectedFormattedUsers.getString(1) +
                             "/" + collectedFormattedUsers.getString(2) +
-                            "/" + collectedFormattedUsers.getString(3) +
-                            "/" + collectedFormattedUsers.getString(4);
+                            "/" + collectedFormattedUsers.getString(3);
                 String newResult[] = result.split("/");
                 theArray.add(newResult);
             }
@@ -61,15 +59,9 @@ class Database implements Serializable{
     }
 
     double getAverage(double mood){
-<<<<<<< HEAD
         Cursor roomMedianCursor = database.rawQuery("Select * from nurses WHERE shift_id = '" +
                 getShiftNumber()+"' AND inputDate ='"+ getDay()+"';",null);
         ArrayList<Double> collectedDatabaseMean = new ArrayList<>();
-=======
-        Cursor roomMedianCursor = database.rawQuery("Select * from nurses WHERE shift_id = '"+ getShiftNumber()+"' AND inputDate ='"+ getDay()+
-                "' AND changed ='"+ 0 +"';",null);
-        ArrayList<Double> collectedRoomMedian = new ArrayList<>();
->>>>>>> parent of 28876fa... Demo A
         if(roomMedianCursor.getCount() ==0){
             Log.d("Database","getRoomMedian() "+"Empty");
             return mood;
@@ -79,7 +71,6 @@ class Database implements Serializable{
                 Double result = roomMedianCursor.getDouble(1);
                 collectedDatabaseMean.add(result);
             }
-<<<<<<< HEAD
             collectedDatabaseMean.add(mood);
             Collections.sort(collectedDatabaseMean);
             double median = 0;
@@ -94,32 +85,17 @@ class Database implements Serializable{
             median = median/collectedDatabaseMean.size();
             Log.d("Database", "getAverage() " + collectedDatabaseMean.size()
                     + " size of the sample size, " + "Cursor size: " + roomMedianCursor.getCount());
-=======
-            collectedRoomMedian.add(mood);
-            Collections.sort(collectedRoomMedian);
-            double median;
-            if (collectedRoomMedian.size() % 2 == 0) {
-                median = (collectedRoomMedian.get(collectedRoomMedian.size() / 2) + collectedRoomMedian.get(collectedRoomMedian.size() / 2 - 1)) / 2;
-            } else {
-                median = collectedRoomMedian.get(collectedRoomMedian.size() / 2);
-            }
-            Log.d("Database", "getAverage() " + collectedRoomMedian.size() + " size of the sample size, " + "Cursor size: " + roomMedianCursor.getCount());
->>>>>>> parent of 28876fa... Demo A
             roomMedianCursor.close();
-            return median;
+            DecimalFormat df = new DecimalFormat("#.##");
+            parseDouble(df.format(median));
+            return parseDouble(df.format(median));
         }
     }
 
     double getRoomMedian(){
-<<<<<<< HEAD
         Cursor roomMedianCursor = database.rawQuery("Select * from nurses WHERE shift_id = '"
                 + getShiftNumber()+"' AND inputDate ='"+ getDay()+"';",null);
         ArrayList<Double> collectedRoomMean = new ArrayList<>();
-=======
-        Cursor roomMedianCursor = database.rawQuery("Select * from nurses WHERE shift_id = '"+ getShiftNumber()+"' AND inputDate ='"+ getDay()+
-                "' AND changed ='"+ 0 +"';",null);
-        ArrayList<Double> collectedRoomMedian = new ArrayList<>();
->>>>>>> parent of 28876fa... Demo A
         if(roomMedianCursor.getCount() ==0){
             Log.d("Database","getRoomMedian() "+"Empty");
             return 0;
@@ -129,7 +105,6 @@ class Database implements Serializable{
                 Double result = roomMedianCursor.getDouble(1);
                 collectedRoomMean.add(result);
             }
-<<<<<<< HEAD
             Collections.sort(collectedRoomMean);
             double median = 0;
 <<<<<<< HEAD
@@ -143,18 +118,10 @@ class Database implements Serializable{
             median = median/collectedRoomMean.size();
             Log.d("Database", "getRoomMedian() " + collectedRoomMean.size()
                     + " size of the sample size, " + "Cursor size: " + roomMedianCursor.getCount());
-=======
-            Collections.sort(collectedRoomMedian);
-            double median;
-            if (collectedRoomMedian.size() % 2 == 0) {
-                median = (collectedRoomMedian.get(collectedRoomMedian.size() / 2) + collectedRoomMedian.get(collectedRoomMedian.size() / 2 - 1)) / 2;
-            } else {
-                median = collectedRoomMedian.get(collectedRoomMedian.size() / 2);
-            }
-            Log.d("Database", "getRoomMedian() " + collectedRoomMedian.size() + " size of the sample size, " + "Cursor size: " + roomMedianCursor.getCount());
->>>>>>> parent of 28876fa... Demo A
             roomMedianCursor.close();
-            return median;
+            DecimalFormat df = new DecimalFormat("#.##");
+            parseDouble(df.format(median));
+            return parseDouble(df.format(median));
         }
     }
 
@@ -165,7 +132,8 @@ class Database implements Serializable{
         String query = "INSERT into avgShift(`shift_id`,`average`,`inputDate`)" +
                 "VALUES('" + shift + "','"+ median +"','"+ date +"');";
         database.execSQL(query);
-        String updateMedian = "UPDATE avgRoom set median = '"+ median +"',inputDate='"+ getDay()+"' WHERE key_id = '"+getShiftNumber()+"';";
+        String updateMedian = "UPDATE avgRoom set median = '"+ median +"',inputDate='"+
+                getDay()+"' WHERE key_id = '"+getShiftNumber()+"';";
         database.execSQL(updateMedian);
         Toast.makeText(context, "Loading...", Toast.LENGTH_SHORT).show();
     }
@@ -290,7 +258,9 @@ class Database implements Serializable{
             Cursor csvCursor = db.rawQuery("SELECT * FROM nurses", null);
             csvWriter.writeNext(csvCursor.getColumnNames());
             while (csvCursor.moveToNext()) {
-                String csvStrings[] = {csvCursor.getString(0), csvCursor.getString(1), csvCursor.getString(2), csvCursor.getString(3), csvCursor.getString(4),csvCursor.getString(5)};
+                String csvStrings[] = {csvCursor.getString(0),
+                        csvCursor.getString(1), csvCursor.getString(2),
+                        csvCursor.getString(3), csvCursor.getString(4),csvCursor.getString(5)};
                 csvWriter.writeNext(csvStrings);
                 Log.d("Database","saveDB() "+csvStrings[0]);
             }
@@ -304,41 +274,6 @@ class Database implements Serializable{
         catch (Exception sqlEx) {
             Log.d("Database", "saveDB() "+sqlEx.getMessage()+ "Exception", sqlEx);
         }
-<<<<<<< HEAD
-=======
-        saveDBMedian();
-    }
-
-    void saveDBMedian() {
-        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-        File exportDirectory = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),"WorkWeather");
-        if (!exportDirectory.exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            exportDirectory.mkdirs();
-        }
-        Log.d("Database","saveDB() "+exportDirectory.toString());
-        File file = new File(exportDirectory, currentDateTimeString+ " " +getCountNumber()+" Medians" +".csv");
-        Log.d("Database","saveDB() "+file.toString());
-        try {
-            //noinspection ResultOfMethodCallIgnored
-            file.createNewFile();
-            CSVWriter csvWriter = new CSVWriter(new FileWriter(file));
-            SQLiteDatabase db = dbHelper.getReadableDatabase();
-            Cursor csvCursor = db.rawQuery("SELECT * FROM avgShift", null);
-            csvWriter.writeNext(csvCursor.getColumnNames());
-            while (csvCursor.moveToNext()) {
-                String csvStrings[] = {csvCursor.getString(0), csvCursor.getString(1), csvCursor.getString(2)};
-                csvWriter.writeNext(csvStrings);
-                Log.d("Database","saveDB() "+csvStrings[0]);
-            }
-            csvWriter.close();
-            csvCursor.close();
-            MediaScannerConnection.scanFile(context, new String[] {exportDirectory.toString()}, null, null);
-        }
-        catch (Exception sqlEx) {
-            Log.d("Database", "saveDB() "+sqlEx.getMessage()+ "Exception", sqlEx);
-        }
->>>>>>> parent of 28876fa... Demo A
     }
 
     int factCheck(String id){
@@ -355,7 +290,8 @@ class Database implements Serializable{
         else
             factCheck =0;
         factCheckCursor.close();
-        Log.d("Database","factCheck() "+"factCheck output is "+ factCheck+ ", There is already: "+ collectedInput.get(0) + " ID is " + id);
+        Log.d("Database","factCheck() "+"factCheck output is "+ factCheck+ ", There is already: "+
+                collectedInput.get(0) + " ID is " + id);
         return factCheck;
     }
 
@@ -366,20 +302,12 @@ class Database implements Serializable{
     }
 
     void dbClearScreen(){
-        Cursor dbClearScreenCursor =database.rawQuery("Select id from nurses where changed = '"+0+"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';",null);
-        Log.d("Database", "dbClearScreen() "+"Size of cursor:" + dbClearScreenCursor.getCount());
-        ArrayList<Integer> previousRoomNurses = new ArrayList<>();
-        while (dbClearScreenCursor.moveToNext()){
-            previousRoomNurses.add(dbClearScreenCursor.getInt(0));
+        Cursor dbClearScreenCursor = database.rawQuery("Select * from nurses",null);
+        if(dbClearScreenCursor.getCount() > 0) {
+            database.execSQL("DELETE FROM nurses");
+            Log.d("Main_Room","Cleared");
         }
-        dbClearScreenCursor.close();
-        for(int i=0;i<previousRoomNurses.size();i++) {
-            Log.d("Database","dbClearScreen() "+"aList:"+ i +" id is: " +previousRoomNurses.get(i));
-            database.execSQL("UPDATE nurses set changed = '"+ 1 + "' where id= '"+previousRoomNurses.get(i)
-                    +"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';");
-            Log.d("Database","dbClearScreen() "+"UPDATE nurses set changed = '"+
-                    1 + "' where id= '"+previousRoomNurses.get(i)+"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';");
-        }
+
     }
      void closeDatabase(){
         database.close();

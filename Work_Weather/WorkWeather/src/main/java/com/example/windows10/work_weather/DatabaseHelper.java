@@ -7,7 +7,7 @@ import android.util.Log;
 
 class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "Hospital_Data_DDW";
+    private static final String DATABASE_NAME = "Hospital_Data_DDW-Demo";
 
     private static final int DATABASE_VERSION = 2;
 
@@ -19,11 +19,7 @@ class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase database) {
 
-<<<<<<< HEAD
         String DATABASE_NURSES = ("CREATE TABLE IF NOT EXISTS nurses(input INT,median DOUBLE,date String,shift_id INT,inputDate String);");
-=======
-        String DATABASE_NURSES = ("CREATE TABLE IF NOT EXISTS nurses(id String,input INT,median DOUBLE,date String,shift_id INT,inputDate String,changed INT);");
->>>>>>> parent of 28876fa... Demo A
         database.execSQL(DATABASE_NURSES);
 
         String DATABASE_KEY = ("CREATE TABLE IF NOT EXISTS key(key_id INT);");
