@@ -56,7 +56,6 @@ public class Main_Room extends AppCompatActivity
     private Button cloudy;
     private Button sunny;
     private ImageView inputOverlay;
-    private ImageView demoOverlay;
     private Double mood;
 
     @Override
@@ -70,10 +69,10 @@ public class Main_Room extends AppCompatActivity
         database = new Database(this);
         Log.d("Main_Room","App has started, the shift number is " + database.getShiftNumber());
 
-//        AlarmController alarmController = new AlarmController(this);
-//        alarmController.startAlarms();
-        RelativeLayout inputScreen = (RelativeLayout)findViewById(R.id.inputScreen);
-        AbsoluteLayout nurseScreen = (AbsoluteLayout) findViewById(R.id.Nurse);
+        AlarmController alarmController = new AlarmController(this);
+        alarmController.startAlarms();
+        RelativeLayout rel3 = (RelativeLayout)findViewById(R.id.inputScreen);
+        AbsoluteLayout rel2 = (AbsoluteLayout) findViewById(R.id.Nurse);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -85,11 +84,9 @@ public class Main_Room extends AppCompatActivity
         ImageView weatherOverlay = (ImageView) findViewById(R.id.moodOverlay);
         ImageView rainOverlay = (ImageView) findViewById(R.id.rainOverlay);
         inputOverlay = (ImageView) findViewById(R.id.inputWeather);
-        demoOverlay = (ImageView) findViewById(R.id.demosign);
 
-
-        RelativeLayout touchScreen = (RelativeLayout)findViewById(R.id.relLay);
-        touchScreen.setOnClickListener(tapScreen);
+        RelativeLayout rel = (RelativeLayout)findViewById(R.id.relLay);
+        rel.setOnClickListener(tapScreen);
         
         stormy = (Button) findViewById(R.id.Stormy);
         rainy = (Button) findViewById(R.id.Rain);
@@ -103,7 +100,7 @@ public class Main_Room extends AppCompatActivity
         cloudy.setOnClickListener(cloudyClicked);
         sunny.setOnClickListener(sunnyClicked);
         
-        viewController = new ViewController(touchScreen,nurseScreen,inputScreen, rainOverlay, weatherOverlay, inputOverlay);
+        viewController = new ViewController(rel,rel2,rel3, rainOverlay, weatherOverlay, inputOverlay);
         viewController.startUp();
         setInvisible();
 
@@ -140,7 +137,7 @@ public class Main_Room extends AppCompatActivity
             }
         });
         clearScreen();
-//        setNurseTimers();
+        setNurseTimers();
     }
 
     private void nurseMenu(){
@@ -156,7 +153,7 @@ public class Main_Room extends AppCompatActivity
                     else if (which ==1)
                         startActivity(new Intent(Main_Room.this, DataScreen.class));
                     else if (which ==2){
-//                        database.saveDB();
+                        database.saveDB();
                         Toast.makeText(getApplicationContext(), "DB Saved", Toast.LENGTH_LONG).show();
                     }
                     else if (which ==3){
@@ -224,9 +221,7 @@ public class Main_Room extends AppCompatActivity
     private void selectItem() {
         switch(1) {
             case 1:
-//                loginID();
-                setViewable();
-                viewController.viewInput();
+                loginID();
                 break;
             default:
         }
@@ -294,12 +289,12 @@ public class Main_Room extends AppCompatActivity
                     Toast.makeText(getApplicationContext(), "\t\t\tSorry invalid input\nonly 6 digits are acceptable", Toast.LENGTH_LONG).show();
                     loginID();
                 }
-//                if (!notUsedNotification)
-//                    unusedNotification();
-//                else{
-//                    notifyUsers.cancel();
-//                    Log.d("Main_Room","unusedNotification cancelled");
-//                }
+                if (!notUsedNotification)
+                    unusedNotification();
+                else{
+                    notifyUsers.cancel();
+                    Log.d("Main_Room","unusedNotification cancelled");
+                }
             }
         });
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -312,6 +307,7 @@ public class Main_Room extends AppCompatActivity
     }
 
     private void checkWeather(){
+<<<<<<< HEAD
         Double roomMean = database.getRoomMedian();
         Log.d("Main_Room","Recalculation of the mean is: "+ roomMean);
         if (roomMean != 0.0) {
@@ -324,6 +320,20 @@ public class Main_Room extends AppCompatActivity
             else if(roomMean >= 3.6 && roomMean < 4.6)
                 viewController.showClouds();
             else if(roomMean >= 4.6 && roomMean < 5.6)
+=======
+        Double x = database.getRoomMedian();
+        Log.d("Main_Room","Recalculation of the median is: "+ x);
+        if (x != 0.0) {
+            if(x == 1.0)
+                viewController.showThunder();
+            else if(x ==2.0 || x == 1.5)
+                viewController.showRainMood();
+            else if(x ==3.0|| x == 2.5)
+                viewController.showOvercast();
+            else if(x ==4.0|| x == 3.5)
+                viewController.showClouds();
+            else if(x==5.0|| x == 4.5)
+>>>>>>> parent of 28876fa... Demo A
                 viewController.showSun();
         } else
             viewController.startUp();
@@ -337,6 +347,7 @@ public class Main_Room extends AppCompatActivity
     //8th person reset new db table that holds them or turn everything off, turn off timers no need for alarms
     //no need to save database
 
+
     //Hospital
     //mean
     //new background
@@ -347,6 +358,7 @@ public class Main_Room extends AppCompatActivity
     private void showNurses(){
             Log.d("Main_Room","new Nurse is being displayed");
             ImageView nurseView = nurseArray.get(counter.getCount());
+<<<<<<< HEAD
             if(mood == 1 || mood ==2) {
                 if(counter.getCount() ==0)
                     nurseView.setImageResource(R.drawable.nurse_1b);
@@ -367,9 +379,13 @@ public class Main_Room extends AppCompatActivity
             if (!fullRoom) {
 =======
 
+=======
+>>>>>>> parent of 28876fa... Demo A
             if (!sub) { //boolean check to see if mx number of nurses already visible
 >>>>>>> parent of 652c97a... Demo v2 B
                 nurseView.setVisibility(View.VISIBLE);
+                setTimer(nurseView,counter.getCount());
+                getTimer(counter.getCount()).startTimer();
                 counter.setCount();
                 checkWeather();
                 if (counter.getCount() == nurseArray.size()) {
@@ -377,6 +393,7 @@ public class Main_Room extends AppCompatActivity
                     counter.resetCount();
                 }
             }
+<<<<<<< HEAD
             else{
                 for (ImageView aNurseArray : nurseArray) aNurseArray.setVisibility(View.GONE);
                 fullRoom = false;
@@ -384,6 +401,9 @@ public class Main_Room extends AppCompatActivity
                 database.dbClearScreen();
                 setFinishedInput();
             }
+=======
+            else maxedNurses();
+>>>>>>> parent of 28876fa... Demo A
         }
 
     private void maxedNurses(){
@@ -425,6 +445,7 @@ public class Main_Room extends AppCompatActivity
             final int newCount = nurseMap.get(idNow);
             final ImageView nurseView = nurseArray.get(newCount);
             getTimer(newCount).maxedReached();
+//            database.changedMind(getTimer(newCount).getNurseId());
             Log.d("Main_Room","feelingChanged new Nurse: "+ idNow);
             if (!sub) { //boolean check to see if mx number of nurses already visible
                     viewController.fadeTheImage(nurseView,1,0,View.VISIBLE);
@@ -602,15 +623,38 @@ public class Main_Room extends AppCompatActivity
 
     private void setFinishedInput() {
         String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+<<<<<<< HEAD
         Double currentAverage = database.getAverage(mood);
         final String query = "INSERT into nurses(`input`,`median`,`date`,`shift_id`,`inputDate`)" +
                 "VALUES('" + mood +"','"+ currentAverage +"','"+ currentDateTimeString +"','"+ database.getShiftNumber()+"','"+
                 database.getDay()+"');";
+=======
+        final int factCheck = database.factCheck(idNow);
+        if(factCheck == 1) {
+            Log.d("Main_Room","factCheck is 1");
+            database.changedMind(idNow);
+        }
+        else if(factCheck == 0)
+            Log.d("Main_Room","factCheck is 0");
+        Double avg = database.getAverage(mood);
+        final String query = "INSERT into nurses(`id`,`input`,`median`,`date`,`shift_id`,`inputDate`,`changed`)" +
+                "VALUES('" + idNow + "','"+ mood +"','"+ avg +"','"+ currentDateTimeString +"','"+ database.getShiftNumber()+"','"+
+                database.getDay()+"','"+ 0 +"');";
+        database.addMedian(avg,currentDateTimeString,database.getShiftNumber());
+>>>>>>> parent of 28876fa... Demo A
         database.execSQL(query);
         setInvisible();
         viewController.afterInput();
         checkWeather();
-        showNurses();
+        boolean found = nurseMap.containsKey(idNow);
+            if(found) {
+                Log.d("Main_Room","already here " + true);
+                feelingChanged();
+            }
+            else{
+                Log.d("Main_Room","not here here " + false);
+                showNurses();
+            }
     }
 
 }

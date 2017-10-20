@@ -1,5 +1,9 @@
 <resources>
+<<<<<<< Updated upstream
     <string name="app_name">Work_Weather</string>
+=======
+    <string name="app_name">Work_Weather-17OCT</string>
+>>>>>>> Stashed changes
     <string name="title_activity_main__room">Work Weather DDW</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

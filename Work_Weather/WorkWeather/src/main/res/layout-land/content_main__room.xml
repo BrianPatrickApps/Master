@@ -25,103 +25,105 @@
         <ImageView
                 android:id="@+id/nurse5"
                 android:layout_width="90dp"
-                android:layout_height="225dp"
+                android:layout_height="180dp"
                 android:layout_alignStart="@+id/nurse7"
                 android:layout_alignTop="@+id/nurse7"
                 android:layout_marginLeft="436dp"
                 android:layout_marginStart="119dp"
                 android:layout_x="383dp"
-                android:layout_y="186dp"
+                android:layout_y="232dp"
                 android:adjustViewBounds="true"
                 android:cropToPadding="false"
                 android:scaleType="fitXY"
                 android:visibility="gone"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/nurse7"
-                app:srcCompat="@drawable/nurse_5a"
+                app:srcCompat="@drawable/newnurse5"
                 tools:layout_constraintLeft_creator="1"
                 tools:layout_constraintTop_creator="1"
                 tools:ignore="ContentDescription,ObsoleteLayoutParam,RtlHardcoded"/>
 
         <ImageView
-                android:id="@+id/nurse1"
-                android:layout_width="95dp"
-                android:layout_height="219dp"
-                android:layout_x="114dp"
-                android:layout_y="191dp"
-                android:adjustViewBounds="true"
-                android:scaleType="fitXY"
-                android:visibility="gone"
-                app:srcCompat="@drawable/nurse_1a"
-                android:contentDescription="@+id/nurse1"/>
-
-        <ImageView
-                android:id="@+id/nurse4"
-                android:layout_width="125dp"
-                android:layout_height="283dp"
-                android:layout_x="33dp"
-                android:layout_y="183dp"
-                android:adjustViewBounds="true"
-                android:scaleType="fitXY"
-                android:visibility="gone"
-                app:srcCompat="@drawable/nurse_4a"
-                android:contentDescription="@+id/nurse4"/>
-
-        <ImageView
-                android:id="@+id/nurse2"
-                android:layout_width="110dp"
-                android:layout_height="265dp"
-                android:layout_x="479dp"
-                android:layout_y="179dp"
-                android:adjustViewBounds="true"
-                android:scaleType="fitXY"
-                android:visibility="gone"
-                app:srcCompat="@drawable/nurse_2a"
-                android:contentDescription="@+id/nurse2"/>
-
-        <ImageView
-                android:id="@+id/nurse6"
-                android:layout_width="140dp"
-                android:layout_height="351dp"
-                android:layout_x="577dp"
-                android:layout_y="161dp"
-                android:adjustViewBounds="true"
-                android:cropToPadding="false"
-                android:scaleType="fitXY"
-                android:visibility="gone"
-                app:srcCompat="@drawable/nurse_6a"
-                android:contentDescription="@+id/nurse6"/>
-
-        <ImageView
-                android:id="@+id/nurse3"
-                android:layout_width="147dp"
-                android:layout_height="314dp"
-                android:layout_x="727dp"
-                android:layout_y="168dp"
-                android:visibility="gone"
-                app:srcCompat="@drawable/nurse_3a"
-                android:contentDescription="@+id/nurse3"
-                android:layout_marginTop="17dp"
-        />
-        <ImageView
                 android:id="@+id/nurse7"
                 android:layout_width="144dp"
-                android:layout_height="336dp"
-                android:layout_marginStart="33dp"
+                android:layout_height="269dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="23dp"
+                android:layout_marginRight="64dp"
+                android:layout_marginStart="265dp"
+                android:layout_toEndOf="@+id/buttonScreen"
                 android:layout_x="264dp"
-                android:layout_y="166dp"
+                android:layout_y="237dp"
                 android:adjustViewBounds="true"
                 android:scaleType="fitXY"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="@+id/nurse5"
-                app:srcCompat="@drawable/nurse_7a"
+                app:srcCompat="@drawable/newnurse7"
                 tools:layout_constraintBottom_creator="1"
                 tools:layout_constraintRight_creator="1"
                 tools:ignore="ObsoleteLayoutParam,RtlHardcoded"
-                android:contentDescription="@+id/nurse7" android:layout_alignTop="@+id/nurse3"
-                android:layout_alignLeft="@+id/linearLayout" android:layout_alignStart="@+id/linearLayout"
-                android:layout_marginLeft="33dp"/>
+                android:contentDescription="@+id/nurse7"/>
+
+        <ImageView
+                android:id="@+id/nurse1"
+                android:layout_width="95dp"
+                android:layout_height="180dp"
+                android:layout_x="114dp"
+                android:layout_y="231dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:visibility="gone"
+                app:srcCompat="@drawable/newnurse1"
+                android:contentDescription="@+id/nurse1"/>
+
+        <ImageView
+                android:id="@+id/nurse4"
+                android:layout_width="125dp"
+                android:layout_height="225dp"
+                android:layout_x="33dp"
+                android:layout_y="242dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:visibility="gone"
+                app:srcCompat="@drawable/newnurse4"
+                android:contentDescription="@+id/nurse4"/>
+
+        <ImageView
+                android:id="@+id/nurse2"
+                android:layout_width="110dp"
+                android:layout_height="210dp"
+                android:layout_x="479dp"
+                android:layout_y="235dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:visibility="gone"
+                app:srcCompat="@drawable/newnurse2"
+                android:contentDescription="@+id/nurse2"/>
+
+        <ImageView
+                android:id="@+id/nurse6"
+                android:layout_width="140dp"
+                android:layout_height="285dp"
+                android:layout_x="577dp"
+                android:layout_y="229dp"
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="fitXY"
+                android:visibility="gone"
+                app:srcCompat="@drawable/newnurse6"
+                android:contentDescription="@+id/nurse6"/>
+
+        <ImageView
+                android:id="@+id/nurse3"
+                android:layout_width="135dp"
+                android:layout_height="250dp"
+                android:layout_x="727dp"
+                android:layout_y="232dp"
+                android:visibility="gone"
+                app:srcCompat="@drawable/newnurse3"
+                android:contentDescription="@+id/nurse3"/>
+
         <ImageView
                 android:id="@+id/rainOverlay"
                 android:layout_width="match_parent"
@@ -154,15 +156,11 @@
             android:id="@+id/inputScreen"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
-            tools:ignore="RtlCompat" android:layout_alignParentTop="true" android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true">
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:visibility="visible"
+            tools:ignore="RtlCompat">
 
-        <ImageView
-                android:layout_width="500dp"
-                android:layout_height="100dp" app:srcCompat="@drawable/demo_sign" android:id="@+id/demosign"
-                android:layout_above="@+id/inputWeather" android:layout_alignLeft="@+id/linearLayout"
-                android:layout_alignStart="@+id/linearLayout" android:layout_marginBottom="21dp"/>
         <RelativeLayout
                 android:id="@+id/linearLayout"
                 android:layout_width="500dp"
@@ -178,7 +176,7 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:text="Storm"
-                    tools:ignore="HardcodedText"/>
+                    tools:ignore="HardcodedText" />
 
 
             <Button
@@ -188,7 +186,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_toEndOf="@+id/Stormy"
                     android:text="Rain"
-                    tools:ignore="HardcodedText"/>
+                    tools:ignore="HardcodedText" />
 
             <Button
                     android:id="@+id/Overcast"
@@ -197,7 +195,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_toStartOf="@+id/Cloudy"
                     android:text="Cast"
-                    tools:ignore="HardcodedText"/>
+                    tools:ignore="HardcodedText" />
 
             <Button
                     android:id="@+id/Cloudy"
@@ -206,7 +204,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_toStartOf="@+id/Sunny"
                     android:text="Cloud"
-                    tools:ignore="HardcodedText"/>
+                    tools:ignore="HardcodedText" />
 
             <Button
                     android:id="@+id/Sunny"
@@ -215,7 +213,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentTop="true"
                     android:text="Sun"
-                    tools:ignore="HardcodedText"/>
+                    tools:ignore="HardcodedText" />
 
         </RelativeLayout>
 
