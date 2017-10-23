@@ -311,6 +311,7 @@ public class Main_Room extends AppCompatActivity
     private void showNurses(){
             Log.d("Main_Room","new Nurse is being displayed");
             ImageView nurseView = nurseArray.get(counter.getCount());
+            changeNurse(nurseView);
             if (!sub) { //boolean check to see if mx number of nurses already visible
                 nurseView.setVisibility(View.VISIBLE);
                 setTimer(nurseView,counter.getCount());
@@ -332,6 +333,7 @@ public class Main_Room extends AppCompatActivity
                 oldNurse.maxedReached();
             }
             final ImageView newNurse = nurseArray.get(counter.getCount());
+            changeNurse(newNurse);
             newNurse.setVisibility(View.GONE);
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
@@ -355,6 +357,7 @@ public class Main_Room extends AppCompatActivity
         if(counter.getCount() == 0 && !sub) {
             Log.d("Main_Room","This ID is already in the Database but the room is empty: "+idNow);
             ImageView nurseView = nurseArray.get(counter.getCount());
+            changeNurse(nurseView);
             nurseView.setVisibility(View.VISIBLE);
             setTimer(nurseView,counter.getCount());
             getTimer(counter.getCount()).startTimer();
@@ -363,6 +366,7 @@ public class Main_Room extends AppCompatActivity
         else if(counter.getCount() > 0){
             final int newCount = nurseMap.get(idNow);
             final ImageView nurseView = nurseArray.get(newCount);
+            changeNurse(nurseView);
             getTimer(newCount).maxedReached();
             Log.d("Main_Room","feelingChanged new Nurse: "+ idNow);
             if (!sub) { //boolean check to see if mx number of nurses already visible
@@ -407,6 +411,41 @@ public class Main_Room extends AppCompatActivity
             database.dbClearScreen();
         else
             Log.d("Main_Room","clearScreen() "+"There are no outlying inputs");
+    }
+
+    private void changeNurse(ImageView nurseView){
+        if(mood == 1.0 || mood ==2.0) {
+            if(counter.getCount() ==0)
+                nurseView.setImageResource(R.drawable.nurse_1b);
+            else if(counter.getCount() ==1)
+                nurseView.setImageResource(R.drawable.nurse_2b);
+            else if(counter.getCount() ==2)
+                nurseView.setImageResource(R.drawable.nurse_3b);
+            else if(counter.getCount() ==3)
+                nurseView.setImageResource(R.drawable.nurse_4b);
+            else if(counter.getCount() ==4)
+                nurseView.setImageResource(R.drawable.nurse_5b);
+            else if(counter.getCount() ==5)
+                nurseView.setImageResource(R.drawable.nurse_6b);
+            else
+                nurseView.setImageResource(R.drawable.nurse_7b);
+        }
+        else{
+            if(counter.getCount() ==0)
+                nurseView.setImageResource(R.drawable.nurse_1a);
+            else if(counter.getCount() ==1)
+                nurseView.setImageResource(R.drawable.nurse_2a);
+            else if(counter.getCount() ==2)
+                nurseView.setImageResource(R.drawable.nurse_3a);
+            else if(counter.getCount() ==3)
+                nurseView.setImageResource(R.drawable.nurse_4a);
+            else if(counter.getCount() ==4)
+                nurseView.setImageResource(R.drawable.nurse_5a);
+            else if(counter.getCount() ==5)
+                nurseView.setImageResource(R.drawable.nurse_6a);
+            else
+                nurseView.setImageResource(R.drawable.nurse_7a);
+        }
     }
 
     private void setTimer(View v,int countDownID) {
@@ -546,6 +585,7 @@ public class Main_Room extends AppCompatActivity
         }
         else if(factCheck == 0)
             Log.d("Main_Room","factCheck is 0");
+
         Double avg = database.getAverage(mood);
         final String query = "INSERT into nurses(`id`,`input`,`median`,`date`,`shift_id`,`inputDate`,`changed`)" +
                 "VALUES('" + idNow + "','"+ mood +"','"+ avg +"','"+ currentDateTimeString +"','"+ database.getShiftNumber()+"','"+
@@ -556,13 +596,10 @@ public class Main_Room extends AppCompatActivity
         viewController.afterInput();
         checkWeather();
         boolean found = nurseMap.containsKey(idNow);
-            if(found) {
-                Log.d("Main_Room","already here " + true);
+        Log.d("Main_Room","not here here " + found);
+            if(found)
                 feelingChanged();
-            }
-            else{
-                Log.d("Main_Room","not here here " + false);
+            else
                 showNurses();
-            }
     }
 }
