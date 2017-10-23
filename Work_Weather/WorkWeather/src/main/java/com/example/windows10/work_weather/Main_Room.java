@@ -29,10 +29,8 @@ public class Main_Room extends AppCompatActivity
 
     private Database database;
     private ViewController viewController;
-
     private ArrayList<ImageView> nurseArray;
     private Counter counter;
-
     private Button stormy;
     private Button rainy;
     private Button overcast;
@@ -66,7 +64,6 @@ public class Main_Room extends AppCompatActivity
         ImageView weatherOverlay = (ImageView) findViewById(R.id.moodOverlay);
         ImageView rainOverlay = (ImageView) findViewById(R.id.rainOverlay);
         inputOverlay = (ImageView) findViewById(R.id.inputWeather);
-
 
         RelativeLayout touchScreen = (RelativeLayout)findViewById(R.id.relLay);
         touchScreen.setOnClickListener(tapScreen);
@@ -199,7 +196,6 @@ public class Main_Room extends AppCompatActivity
     private void selectItem() {
         switch(1) {
             case 1:
-//                loginID();
                 setViewable();
                 viewController.viewInput();
                 break;
@@ -273,7 +269,8 @@ public class Main_Room extends AppCompatActivity
     private void showNurses(){
             Log.d("Main_Room","new Nurse is being displayed");
             ImageView nurseView = nurseArray.get(counter.getCount());
-            if(mood == 1 || mood ==2) {
+            Log.d("Main_Room","Mood is:" + mood);
+            if(mood == 1.0 || mood ==2.0) {
                 if(counter.getCount() ==0)
                     nurseView.setImageResource(R.drawable.nurse_1b);
                 else if(counter.getCount() ==1)
@@ -289,6 +286,24 @@ public class Main_Room extends AppCompatActivity
                 else
                     nurseView.setImageResource(R.drawable.nurse_7b);
             }
+            //Change for hospital
+            else{
+                if(counter.getCount() ==0)
+                    nurseView.setImageResource(R.drawable.nurse_1a);
+                else if(counter.getCount() ==1)
+                    nurseView.setImageResource(R.drawable.nurse_2a);
+                else if(counter.getCount() ==2)
+                    nurseView.setImageResource(R.drawable.nurse_3a);
+                else if(counter.getCount() ==3)
+                    nurseView.setImageResource(R.drawable.nurse_4a);
+                else if(counter.getCount() ==4)
+                    nurseView.setImageResource(R.drawable.nurse_5a);
+                else if(counter.getCount() ==5)
+                    nurseView.setImageResource(R.drawable.nurse_6a);
+                else
+                    nurseView.setImageResource(R.drawable.nurse_7a);
+            }
+
             if (!fullRoom) { //boolean check to see if mx number of nurses already visible
                 nurseView.setVisibility(View.VISIBLE);
                 counter.setCount();
@@ -302,7 +317,6 @@ public class Main_Room extends AppCompatActivity
                 for (ImageView aNurseArray : nurseArray)
                     aNurseArray.setVisibility(View.GONE);
                 fullRoom = false;
-                nurseArray.get(counter.getCount()).setVisibility(View.VISIBLE);
                 database.dbClearScreen();
                 setFinishedInput();
             }
