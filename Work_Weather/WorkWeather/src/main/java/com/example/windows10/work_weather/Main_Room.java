@@ -291,18 +291,18 @@ public class Main_Room extends AppCompatActivity
     }
 
     private void checkWeather(){
-        Double x = database.getRoomMedian();
-        Log.d("Main_Room","Recalculation of the median is: "+ x);
-        if (x != 0.0) {
-            if(x == 1.0)
+        Double roomMean = database.getRoomMedian();
+        Log.d("Main_Room","Recalculation of the mean is: "+ roomMean);
+        if (roomMean != 0.0) {
+            if(roomMean >= 0.6 && roomMean < 1.6)
                 viewController.showThunder();
-            else if(x ==2.0 || x == 1.5)
+            else if(roomMean >= 1.6 && roomMean < 2.6)
                 viewController.showRainMood();
-            else if(x ==3.0|| x == 2.5)
+            else if(roomMean >= 2.6 && roomMean < 3.6)
                 viewController.showOvercast();
-            else if(x ==4.0|| x == 3.5)
+            else if(roomMean >= 3.6 && roomMean < 4.6)
                 viewController.showClouds();
-            else if(x==5.0|| x == 4.5)
+            else if(roomMean >= 4.6 && roomMean < 5.6)
                 viewController.showSun();
         } else
             viewController.startUp();

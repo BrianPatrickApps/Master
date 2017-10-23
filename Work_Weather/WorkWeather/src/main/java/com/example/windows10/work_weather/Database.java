@@ -70,12 +70,11 @@ class Database implements Serializable{
             }
             collectedRoomMedian.add(mood);
             Collections.sort(collectedRoomMedian);
-            double median;
-            if (collectedRoomMedian.size() % 2 == 0) {
-                median = (collectedRoomMedian.get(collectedRoomMedian.size() / 2) + collectedRoomMedian.get(collectedRoomMedian.size() / 2 - 1)) / 2;
-            } else {
-                median = collectedRoomMedian.get(collectedRoomMedian.size() / 2);
+            double median= 0;
+            for (Double aCollectedRoomMedian : collectedRoomMedian) {
+                median += aCollectedRoomMedian;
             }
+            median = median/collectedRoomMedian.size();
             Log.d("Database", "getAverage() " + collectedRoomMedian.size() + " size of the sample size, " + "Cursor size: " + roomMedianCursor.getCount());
             roomMedianCursor.close();
             return median;
@@ -96,12 +95,11 @@ class Database implements Serializable{
                 collectedRoomMedian.add(result);
             }
             Collections.sort(collectedRoomMedian);
-            double median;
-            if (collectedRoomMedian.size() % 2 == 0) {
-                median = (collectedRoomMedian.get(collectedRoomMedian.size() / 2) + collectedRoomMedian.get(collectedRoomMedian.size() / 2 - 1)) / 2;
-            } else {
-                median = collectedRoomMedian.get(collectedRoomMedian.size() / 2);
+            double median= 0;
+            for (Double aCollectedRoomMedian : collectedRoomMedian) {
+                median += aCollectedRoomMedian;
             }
+            median = median/collectedRoomMedian.size();
             Log.d("Database", "getRoomMedian() " + collectedRoomMedian.size() + " size of the sample size, " + "Cursor size: " + roomMedianCursor.getCount());
             roomMedianCursor.close();
             return median;
