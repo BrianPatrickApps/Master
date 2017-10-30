@@ -18,20 +18,19 @@ public class DataScreen extends AppCompatActivity {
 
         Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/Futura Medium.ttf");
         Database database = new Database(this);
-//        Double databaseMedian = database.getMedian();
-        Double databaseMedian = database.getRoomMedian();
+        Double databaseAverage = database.getRoomAverage();
         int databaseShiftNumber = database.getShiftNumber();
         String databaseDay = database.getDay();
 
-        TextView screenMedian = (TextView)findViewById(R.id.idScreen);
+        TextView screenAverage = (TextView)findViewById(R.id.idScreen);
         TextView screenShift = (TextView)findViewById(R.id.shiftView);
         TextView screenDay = (TextView)findViewById(R.id.textView3);
 
         screenShift.setTypeface(typeface);
-        screenMedian.setTypeface(typeface);
+        screenAverage.setTypeface(typeface);
         screenDay.setTypeface(typeface);
 
-        screenMedian.setText(String.format("Current Median: %s", String.valueOf(databaseMedian)));
+        screenAverage.setText(String.format("Current Average: %s", String.valueOf(databaseAverage)));
         screenShift.setText(String.format("Current Shift: %s", String.valueOf(databaseShiftNumber)));
         screenDay.setText(String.format("Current Day: %s", String.valueOf(databaseDay)));
 

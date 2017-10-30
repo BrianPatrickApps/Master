@@ -13,7 +13,7 @@ import static android.content.Context.ALARM_SERVICE;
 
 class AlarmController {
 
-    Context context;
+    private Context context;
 
     AlarmController(Context context){
         this.context = context;

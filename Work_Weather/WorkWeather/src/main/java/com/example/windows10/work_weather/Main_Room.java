@@ -291,7 +291,7 @@ public class Main_Room extends AppCompatActivity
     }
 
     private void checkWeather(){
-        Double roomMean = database.getRoomMedian();
+        Double roomMean = database.getRoomAverage();
         Log.d("Main_Room","Recalculation of the mean is: "+ roomMean);
         if (roomMean != 0.0) {
             if(roomMean >= 0.6 && roomMean < 1.6)
@@ -315,7 +315,10 @@ public class Main_Room extends AppCompatActivity
             if (!sub) { //boolean check to see if mx number of nurses already visible
                 nurseView.setVisibility(View.VISIBLE);
                 setTimer(nurseView,counter.getCount());
-                getTimer(counter.getCount()).startTimer();
+                NurseTimer nurse  = getTimer(counter.getCount());
+                if (nurse != null) {
+                    nurse.startTimer();
+                }
                 counter.setCount();
                 checkWeather();
                 if (counter.getCount() == nurseArray.size()) {
@@ -343,7 +346,10 @@ public class Main_Room extends AppCompatActivity
                 }
             },1000);
             setTimer(newNurse,counter.getCount());
-            getTimer(counter.getCount()).startTimer();
+            NurseTimer nurse  = getTimer(counter.getCount());
+            if (nurse != null) {
+                nurse.startTimer();
+            }
             counter.setCount();
             checkWeather();
             if (counter.getCount() == nurseArray.size()) {
@@ -360,19 +366,28 @@ public class Main_Room extends AppCompatActivity
             changeNurse(nurseView);
             nurseView.setVisibility(View.VISIBLE);
             setTimer(nurseView,counter.getCount());
-            getTimer(counter.getCount()).startTimer();
+            NurseTimer nurse  = getTimer(counter.getCount());
+            if (nurse != null) {
+                nurse.startTimer();
+            }
             counter.setCount();
         }
         else if(counter.getCount() > 0){
             final int newCount = nurseMap.get(idNow);
             final ImageView nurseView = nurseArray.get(newCount);
             changeNurse(nurseView);
-            getTimer(newCount).maxedReached();
+            NurseTimer oldNurse = getTimer(newCount);
+            if (oldNurse != null) {
+                oldNurse.maxedReached();
+            }
             Log.d("Main_Room","feelingChanged new Nurse: "+ idNow);
             if (!sub) { //boolean check to see if mx number of nurses already visible
                     viewController.fadeTheImage(nurseView,1,0,View.VISIBLE);
                     setTimer(nurseView,newCount);
-                    getTimer(newCount).startTimer();
+                NurseTimer nurse  = getTimer(counter.getCount());
+                if (nurse != null) {
+                    nurse.startTimer();
+                }
                     checkWeather();
                 if (counter.getCount() == nurseArray.size()) {
                     counter.resetCount();
@@ -586,7 +601,7 @@ public class Main_Room extends AppCompatActivity
         else if(factCheck == 0)
             Log.d("Main_Room","factCheck is 0");
 
-        Double avg = database.getAverage(mood);
+        Double avg = database.getNewRoomAverage(mood);
         final String query = "INSERT into nurses(`id`,`input`,`median`,`date`,`shift_id`,`inputDate`,`changed`)" +
                 "VALUES('" + idNow + "','"+ mood +"','"+ avg +"','"+ currentDateTimeString +"','"+ database.getShiftNumber()+"','"+
                 database.getDay()+"','"+ 0 +"');";

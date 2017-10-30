@@ -49,7 +49,7 @@ class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion){
         Log.d("Database_Helper",
                 "Upgrading database from " + oldVersion +" to "+newVersion);
-        database.execSQL("DROP TABLE IF EXISTS users");
+        database.execSQL("DROP TABLE IF EXISTS "+DATABASE_NAME );
         onCreate(database);
     }
 }

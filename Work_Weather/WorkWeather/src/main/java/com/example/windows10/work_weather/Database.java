@@ -11,9 +11,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+
+import static java.lang.Double.parseDouble;
 
 class Database implements Serializable{
 
@@ -55,12 +58,12 @@ class Database implements Serializable{
     }
 
     //Gets the median
-    double getAverage(double mood){
+    double getNewRoomAverage(double mood){
         Cursor roomMedianCursor = database.rawQuery("Select * from nurses WHERE shift_id = '"+ getShiftNumber()+"' AND inputDate ='"+ getDay()+
                 "' AND changed ='"+ 0 +"';",null);
         ArrayList<Double> collectedRoomMedian = new ArrayList<>();
         if(roomMedianCursor.getCount() ==0){
-            Log.d("Database","getRoomMedian() "+"Empty");
+            Log.d("Database","getNewRoomAverage() "+"Empty");
             return mood;
         }
         else {
@@ -75,18 +78,19 @@ class Database implements Serializable{
                 median += aCollectedRoomMedian;
             }
             median = median/collectedRoomMedian.size();
-            Log.d("Database", "getAverage() " + collectedRoomMedian.size() + " size of the sample size, " + "Cursor size: " + roomMedianCursor.getCount());
+            Log.d("Database", "getNewRoomAverage() " + collectedRoomMedian.size() + " size of the sample size, " + "Cursor size: " + roomMedianCursor.getCount());
             roomMedianCursor.close();
-            return median;
+            DecimalFormat df = new DecimalFormat("#.##");
+            return parseDouble(df.format(median));
         }
     }
 
-    double getRoomMedian(){
+    double getRoomAverage(){
         Cursor roomMedianCursor = database.rawQuery("Select * from nurses WHERE shift_id = '"+ getShiftNumber()+"' AND inputDate ='"+ getDay()+
                 "' AND changed ='"+ 0 +"';",null);
         ArrayList<Double> collectedRoomMedian = new ArrayList<>();
         if(roomMedianCursor.getCount() ==0){
-            Log.d("Database","getRoomMedian() "+"Empty");
+            Log.d("Database","getRoomAverage() "+"Empty");
             return 0;
         }
         else {
@@ -100,9 +104,10 @@ class Database implements Serializable{
                 median += aCollectedRoomMedian;
             }
             median = median/collectedRoomMedian.size();
-            Log.d("Database", "getRoomMedian() " + collectedRoomMedian.size() + " size of the sample size, " + "Cursor size: " + roomMedianCursor.getCount());
+            Log.d("Database", "getRoomAverage() " + collectedRoomMedian.size() + " size of the sample size, " + "Cursor size: " + roomMedianCursor.getCount());
             roomMedianCursor.close();
-            return median;
+            DecimalFormat df = new DecimalFormat("#.##");
+            return Double.parseDouble(df.format(median));
         }
     }
 
@@ -114,24 +119,6 @@ class Database implements Serializable{
         String updateMedian = "UPDATE avgRoom set median = '"+ median +"',inputDate='"+ getDay()+"' WHERE key_id = '"+getShiftNumber()+"';";
         database.execSQL(updateMedian);
         Toast.makeText(context, "Loading...", Toast.LENGTH_SHORT).show();
-    }
-
-    //Collects the median of the shift
-    double getMedian(){
-        ArrayList<Double> collectedMedians = new ArrayList<>();
-        Cursor getMedianCursor = database.rawQuery("Select * from avgRoom where key_id = '"+getShiftNumber()+
-                "'AND inputDate ='"+ getDay()+ "';",null);
-        if(getMedianCursor.getCount() ==0)
-            return 0.0;
-        else{
-            while(getMedianCursor.moveToNext()) {
-                Double median = getMedianCursor.getDouble(1);
-                collectedMedians.add(median);
-            }
-        }
-        getMedianCursor.close();
-        Log.d("Database",collectedMedians.get(0)+ "is the Median");
-        return collectedMedians.get(0);
     }
 
     //gets called when the broadcast receiver fires
@@ -245,38 +232,6 @@ class Database implements Serializable{
             String query2 = "UPDATE counter set key_id = '"+(getCountNumber()+1)+"' WHERE key_id ='"+getCountNumber()+"';";
             execSQL(query2);
             Log.d("Database","saveDB() "+"Counter has been updated: "+ getCountNumber());
-        }
-        catch (Exception sqlEx) {
-            Log.d("Database", "saveDB() "+sqlEx.getMessage()+ "Exception", sqlEx);
-        }
-        saveDBMedian();
-    }
-
-    void saveDBMedian() {
-        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-        File exportDirectory = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),"WorkWeather");
-        if (!exportDirectory.exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            exportDirectory.mkdirs();
-        }
-        Log.d("Database","saveDB() "+exportDirectory.toString());
-        File file = new File(exportDirectory, currentDateTimeString+ " " +getCountNumber()+" Medians" +".csv");
-        Log.d("Database","saveDB() "+file.toString());
-        try {
-            //noinspection ResultOfMethodCallIgnored
-            file.createNewFile();
-            CSVWriter csvWriter = new CSVWriter(new FileWriter(file));
-            SQLiteDatabase db = dbHelper.getReadableDatabase();
-            Cursor csvCursor = db.rawQuery("SELECT * FROM avgShift", null);
-            csvWriter.writeNext(csvCursor.getColumnNames());
-            while (csvCursor.moveToNext()) {
-                String csvStrings[] = {csvCursor.getString(0), csvCursor.getString(1), csvCursor.getString(2)};
-                csvWriter.writeNext(csvStrings);
-                Log.d("Database","saveDB() "+csvStrings[0]);
-            }
-            csvWriter.close();
-            csvCursor.close();
-            MediaScannerConnection.scanFile(context, new String[] {exportDirectory.toString()}, null, null);
         }
         catch (Exception sqlEx) {
             Log.d("Database", "saveDB() "+sqlEx.getMessage()+ "Exception", sqlEx);
