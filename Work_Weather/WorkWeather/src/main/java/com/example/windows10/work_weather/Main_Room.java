@@ -34,6 +34,9 @@ public class Main_Room extends AppCompatActivity
     private boolean notUsedNotification = false;
     private CountDownTimer notifyUsers;
     private String idNow;
+    private ImageView weatherOverlay;
+    private RelativeLayout rel;
+    private ImageView rainOverlay;
 
     private NurseTimer nurseTimer1;
     private NurseTimer nurseTimer2;
@@ -78,11 +81,11 @@ public class Main_Room extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        ImageView weatherOverlay = (ImageView) findViewById(R.id.moodOverlay);
-        ImageView rainOverlay = (ImageView) findViewById(R.id.rainOverlay);
+        weatherOverlay = (ImageView) findViewById(R.id.moodOverlay);
+        rainOverlay = (ImageView) findViewById(R.id.rainOverlay);
         inputOverlay = (ImageView) findViewById(R.id.inputWeather);
 
-        RelativeLayout rel = (RelativeLayout)findViewById(R.id.relLay);
+        rel = (RelativeLayout)findViewById(R.id.relLay);
         rel.setOnClickListener(tapScreen);
         
         stormy = (Button) findViewById(R.id.Stormy);
@@ -308,7 +311,7 @@ public class Main_Room extends AppCompatActivity
             viewController.startUp();
     }
 
-    private void showNurses(){
+     private void showNurses(){
             Log.d("Main_Room","new Nurse is being displayed");
             ImageView nurseView = nurseArray.get(counter.getCount());
             changeNurse(nurseView);
@@ -318,6 +321,10 @@ public class Main_Room extends AppCompatActivity
                 NurseTimer nurse  = getTimer(counter.getCount());
                 if (nurse != null) {
                     nurse.startTimer();
+                }
+                else{
+                    setNurseTimers();
+                    showNurses();
                 }
                 counter.setCount();
                 checkWeather();
@@ -370,6 +377,10 @@ public class Main_Room extends AppCompatActivity
             if (nurse != null) {
                 nurse.startTimer();
             }
+            else{
+                setNurseTimers();
+                feelingChanged();
+            }
             counter.setCount();
         }
         else if(counter.getCount() > 0){
@@ -382,13 +393,13 @@ public class Main_Room extends AppCompatActivity
             }
             Log.d("Main_Room","feelingChanged new Nurse: "+ idNow);
             if (!sub) { //boolean check to see if mx number of nurses already visible
-                    viewController.fadeTheImage(nurseView,1,0,View.VISIBLE);
-                    setTimer(nurseView,newCount);
+                viewController.fadeTheImage(nurseView,1,0,View.VISIBLE);
+                setTimer(nurseView,newCount);
                 NurseTimer nurse  = getTimer(counter.getCount());
                 if (nurse != null) {
                     nurse.startTimer();
                 }
-                    checkWeather();
+                checkWeather();
                 if (counter.getCount() == nurseArray.size()) {
                     counter.resetCount();
                     sub = true;
@@ -485,13 +496,13 @@ public class Main_Room extends AppCompatActivity
     }
 
     private void setNurseTimers(){
-        nurseTimer1 = new NurseTimer(database);
-        nurseTimer2 = new NurseTimer(database);
-        nurseTimer3 = new NurseTimer(database);
-        nurseTimer4 = new NurseTimer(database);
-        nurseTimer5 = new NurseTimer(database);
-        nurseTimer6 = new NurseTimer(database);
-        nurseTimer7 = new NurseTimer(database);
+        nurseTimer1 = new NurseTimer(database,weatherOverlay,rel,rainOverlay);
+        nurseTimer2 = new NurseTimer(database,weatherOverlay,rel,rainOverlay);
+        nurseTimer3 = new NurseTimer(database,weatherOverlay,rel,rainOverlay);
+        nurseTimer4 = new NurseTimer(database,weatherOverlay,rel,rainOverlay);
+        nurseTimer5 = new NurseTimer(database,weatherOverlay,rel,rainOverlay);
+        nurseTimer6 = new NurseTimer(database,weatherOverlay,rel,rainOverlay);
+        nurseTimer7 = new NurseTimer(database,weatherOverlay,rel,rainOverlay);
     }
 
     private NurseTimer getTimer(int timerID){
