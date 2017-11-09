@@ -55,6 +55,10 @@ class NurseTimer {
         Log.d("Main_Room","NurseTimer has started " + nurseId);
     }
 
+    String returnID(){
+        return nurseId;
+    }
+
     void maxedReached(){
         nurseTimer.cancel();
         nurseImage.setVisibility(View.GONE);
@@ -62,7 +66,7 @@ class NurseTimer {
     }
 
     private void setRain(){
-        fadeTheImage(rainOverlay,0,1,View.VISIBLE);
+        fadeTheImage(rainOverlay, View.VISIBLE);
     }
 
     private void stopRain(){
@@ -70,35 +74,35 @@ class NurseTimer {
     }
 
     private void showSun(final ImageView weatherOverlay, final RelativeLayout mainScreen){
-        fadeTheImage(weatherOverlay,0,1,View.VISIBLE);
+        fadeTheImage(weatherOverlay, View.VISIBLE);
         weatherOverlay.setImageResource(R.drawable.weather_sun);
         mainScreen.setBackgroundResource(R.drawable.background5_sunny);
         stopRain();
     }
 
     private void showClouds(final ImageView weatherOverlay, final RelativeLayout mainScreen){
-        fadeTheImage(weatherOverlay,0,1,View.VISIBLE);
+        fadeTheImage(weatherOverlay, View.VISIBLE);
         weatherOverlay.setImageResource(R.drawable.weather_halfclouds);
         mainScreen.setBackgroundResource(R.drawable.background4_semi_clouded);
         stopRain();
     }
 
     private void showOvercast(final ImageView weatherOverlay, final RelativeLayout mainScreen){
-        fadeTheImage(weatherOverlay,0,1,View.VISIBLE);
+        fadeTheImage(weatherOverlay, View.VISIBLE);
         weatherOverlay.setImageResource(R.drawable.weather_clouds);
         mainScreen.setBackgroundResource(R.drawable.background3_clouded);
         stopRain();
     }
 
     private void showRainMood(final ImageView weatherOverlay, final RelativeLayout mainScreen){
-        fadeTheImage(weatherOverlay,0,1,View.VISIBLE);
+        fadeTheImage(weatherOverlay, View.VISIBLE);
         weatherOverlay.setImageResource(R.drawable.weather_rain);
         mainScreen.setBackgroundResource(R.drawable.background2_rain);
         setRain();
     }
 
     private void showThunder(final ImageView weatherOverlay, final RelativeLayout mainScreen){
-        fadeTheImage(weatherOverlay,0,1,View.VISIBLE);
+        fadeTheImage(weatherOverlay, View.VISIBLE);
         weatherOverlay.setImageResource(R.drawable.weather_thunder);
         setRain();
         mainScreen.setBackgroundResource(R.drawable.background1_thunderstorm);
@@ -110,8 +114,8 @@ class NurseTimer {
         stopRain();
     }
 
-    private void fadeTheImage(final ImageView img, int fadeInNumber, int fadeOutNumber, final int visibility){
-        Animation fadeOut = new AlphaAnimation(fadeInNumber, fadeOutNumber);
+    private void fadeTheImage(final ImageView img, final int visibility){
+        Animation fadeOut = new AlphaAnimation(0, 1);
         fadeOut.setInterpolator(new AccelerateInterpolator());
         fadeOut.setDuration(500);
         fadeOut.setAnimationListener(new Animation.AnimationListener()

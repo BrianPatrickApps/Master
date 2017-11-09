@@ -35,7 +35,8 @@ class Database implements Serializable{
     }
 
     ArrayList<String[]> collectFormattedUsers(){
-        Cursor collectedFormattedUsers = database.rawQuery("Select * from nurses WHERE shift_id = '"+ getShiftNumber()+"' AND inputDate ='"+ getDay()+"';",null);
+        Cursor collectedFormattedUsers = database.rawQuery("Select * from nurses WHERE shift_id = '"+
+                getShiftNumber()+"' AND inputDate ='"+ getDay()+"';",null);
         ArrayList<String[]>theArray = new ArrayList<>();
         if(collectedFormattedUsers == null){
             Toast.makeText(context, "Empty", Toast.LENGTH_SHORT).show();
@@ -59,26 +60,34 @@ class Database implements Serializable{
 
     //Gets the median
     double getNewRoomAverage(double mood){
-        Cursor roomMedianCursor = database.rawQuery("Select * from nurses WHERE shift_id = '"+ getShiftNumber()+"' AND inputDate ='"+ getDay()+
+        Cursor roomMedianCursor = database.rawQuery("Select * from nurses WHERE shift_id = '"+
+                getShiftNumber()+"' AND inputDate ='"+ getDay()+
                 "' AND changed ='"+ 0 +"';",null);
         ArrayList<Double> collectedRoomMedian = new ArrayList<>();
         if(roomMedianCursor.getCount() ==0){
             Log.d("Database","getNewRoomAverage() "+"Empty");
             return mood;
         }
+
         else {
             while (roomMedianCursor.moveToNext()) {
                 Double result = roomMedianCursor.getDouble(1);
                 collectedRoomMedian.add(result);
             }
+
+            if(collectedRoomMedian.size() == 7)
+                collectedRoomMedian.remove(0);
+
             collectedRoomMedian.add(mood);
-            Collections.sort(collectedRoomMedian);
+
             double median= 0;
             for (Double aCollectedRoomMedian : collectedRoomMedian) {
                 median += aCollectedRoomMedian;
+                Log.d("Main_Room","Testing for the mean: "+ aCollectedRoomMedian);
             }
             median = median/collectedRoomMedian.size();
-            Log.d("Database", "getNewRoomAverage() " + collectedRoomMedian.size() + " size of the sample size, " + "Cursor size: " + roomMedianCursor.getCount());
+            Log.d("Database", "getNewRoomAverage() " + collectedRoomMedian.size() + " size of the sample size, "
+                    + "Cursor size: " + roomMedianCursor.getCount());
             roomMedianCursor.close();
             DecimalFormat df = new DecimalFormat("#.##");
             return parseDouble(df.format(median));
@@ -86,7 +95,8 @@ class Database implements Serializable{
     }
 
     double getRoomAverage(){
-        Cursor roomMedianCursor = database.rawQuery("Select * from nurses WHERE shift_id = '"+ getShiftNumber()+"' AND inputDate ='"+ getDay()+
+        Cursor roomMedianCursor = database.rawQuery("Select * from nurses WHERE shift_id = '"
+                + getShiftNumber()+"' AND inputDate ='"+ getDay()+
                 "' AND changed ='"+ 0 +"';",null);
         ArrayList<Double> collectedRoomMedian = new ArrayList<>();
         if(roomMedianCursor.getCount() ==0){
@@ -98,13 +108,15 @@ class Database implements Serializable{
                 Double result = roomMedianCursor.getDouble(1);
                 collectedRoomMedian.add(result);
             }
-            Collections.sort(collectedRoomMedian);
+
             double median= 0;
             for (Double aCollectedRoomMedian : collectedRoomMedian) {
                 median += aCollectedRoomMedian;
+                Log.d("Main_Room","inputs for the mean "+ aCollectedRoomMedian);
             }
             median = median/collectedRoomMedian.size();
-            Log.d("Database", "getRoomAverage() " + collectedRoomMedian.size() + " size of the sample size, " + "Cursor size: " + roomMedianCursor.getCount());
+            Log.d("Database", "getRoomAverage() " + collectedRoomMedian.size() + " size of the sample size, "
+                    + "Cursor size: " + roomMedianCursor.getCount());
             roomMedianCursor.close();
             DecimalFormat df = new DecimalFormat("#.##");
             return Double.parseDouble(df.format(median));
@@ -206,7 +218,7 @@ class Database implements Serializable{
 
     void saveDB() {
         String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-        File exportDirectory = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),"WorkWeather");
+        File exportDirectory = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),"WorkWeatherHospitalData");
         if (!exportDirectory.exists()) {
             //noinspection ResultOfMethodCallIgnored
             exportDirectory.mkdirs();
@@ -215,14 +227,15 @@ class Database implements Serializable{
         File file = new File(exportDirectory, currentDateTimeString+ " " +getCountNumber()+ ".csv");
         Log.d("Database","saveDB() "+file.toString());
         try {
-            //noinspection ResultOfMethodCallIgnored
             file.createNewFile();
             CSVWriter csvWriter = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = dbHelper.getReadableDatabase();
             Cursor csvCursor = db.rawQuery("SELECT * FROM nurses", null);
             csvWriter.writeNext(csvCursor.getColumnNames());
             while (csvCursor.moveToNext()) {
-                String csvStrings[] = {csvCursor.getString(0), csvCursor.getString(1), csvCursor.getString(2), csvCursor.getString(3), csvCursor.getString(4),csvCursor.getString(5)};
+                String csvStrings[] = {csvCursor.getString(0), csvCursor.getString(1)
+                        , csvCursor.getString(2),
+                        csvCursor.getString(3), csvCursor.getString(4),csvCursor.getString(5)};
                 csvWriter.writeNext(csvStrings);
                 Log.d("Database","saveDB() "+csvStrings[0]);
             }
@@ -252,7 +265,8 @@ class Database implements Serializable{
         else
             factCheck =0;
         factCheckCursor.close();
-        Log.d("Database","factCheck() "+"factCheck output is "+ factCheck+ ", There is already: "+ collectedInput.get(0) + " ID is " + id);
+        Log.d("Database","factCheck() "+"factCheck output is "+ factCheck+ ", There is already: "
+                + collectedInput.get(0) + " ID is " + id);
         return factCheck;
     }
 
@@ -263,7 +277,8 @@ class Database implements Serializable{
     }
 
     void dbClearScreen(){
-        Cursor dbClearScreenCursor =database.rawQuery("Select id from nurses where changed = '"+0+"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';",null);
+        Cursor dbClearScreenCursor =database.rawQuery("Select id from nurses where changed = '"
+                +0+"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';",null);
         Log.d("Database", "dbClearScreen() "+"Size of cursor:" + dbClearScreenCursor.getCount());
         ArrayList<Integer> previousRoomNurses = new ArrayList<>();
         while (dbClearScreenCursor.moveToNext()){

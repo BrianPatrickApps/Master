@@ -25,7 +25,7 @@ public class WeatherRoom extends AppCompatActivity {
         for (int i = 0; i < theArray.size(); i++) {
             array[i] = theArray.get(i);
         }
-        String[] headerData = { "Id","Input","Median","Date","Shift"};
+        String[] headerData = { "Id","Input","Mean","Date","Shift"};
         @SuppressWarnings("unchecked")
         TableView<String[]> tableView = (TableView<String[]>) findViewById(R.id.tableView);
         tableView.setDataAdapter(new SimpleTableDataAdapter(this, array));

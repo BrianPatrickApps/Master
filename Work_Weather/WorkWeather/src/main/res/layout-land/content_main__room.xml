@@ -37,7 +37,7 @@
                 android:visibility="gone"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/nurse7"
-                app:srcCompat="@drawable/nurse_5a"
+                app:srcCompat="@drawable/nurse_5b"
                 tools:layout_constraintLeft_creator="1"
                 tools:layout_constraintTop_creator="1"
                 tools:ignore="ContentDescription,ObsoleteLayoutParam,RtlHardcoded"/>
@@ -51,7 +51,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="fitXY"
                 android:visibility="gone"
-                app:srcCompat="@drawable/nurse_1a"
+                app:srcCompat="@drawable/nurse_1b"
                 android:contentDescription="@+id/nurse1"/>
 
         <ImageView
@@ -63,7 +63,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="fitXY"
                 android:visibility="gone"
-                app:srcCompat="@drawable/nurse_4a"
+                app:srcCompat="@drawable/nurse_4b"
                 android:contentDescription="@+id/nurse4"/>
 
         <ImageView
@@ -75,7 +75,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="fitXY"
                 android:visibility="gone"
-                app:srcCompat="@drawable/nurse_2a"
+                app:srcCompat="@drawable/nurse_2b"
                 android:contentDescription="@+id/nurse2"/>
 
         <ImageView
@@ -88,7 +88,7 @@
                 android:cropToPadding="false"
                 android:scaleType="fitXY"
                 android:visibility="gone"
-                app:srcCompat="@drawable/nurse_6a"
+                app:srcCompat="@drawable/nurse_6b"
                 android:contentDescription="@+id/nurse6"/>
 
         <ImageView
@@ -98,7 +98,7 @@
                 android:layout_x="727dp"
                 android:layout_y="168dp"
                 android:visibility="gone"
-                app:srcCompat="@drawable/nurse_3a"
+                app:srcCompat="@drawable/nurse_3b"
                 android:contentDescription="@+id/nurse3"
                 android:layout_marginTop="17dp"
         />
@@ -114,7 +114,7 @@
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="@+id/nurse5"
-                app:srcCompat="@drawable/nurse_7a"
+                app:srcCompat="@drawable/nurse_7b"
                 tools:layout_constraintBottom_creator="1"
                 tools:layout_constraintRight_creator="1"
                 tools:ignore="ObsoleteLayoutParam,RtlHardcoded"

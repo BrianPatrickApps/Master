@@ -6,7 +6,7 @@ class Counter {
 
     Counter(){
     }
-    void setCount(){
+    void increaseCount(){
         count++;
     }
 
