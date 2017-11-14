@@ -19,9 +19,11 @@ class NurseTimer {
     NurseTimer(final Database database, final ImageView weatherOverlay,final RelativeLayout mainScreen,final ImageView rainOverlay){
 
         this.rainOverlay = rainOverlay;
-        nurseTimer = new CountDownTimer((1000 * 60 * 120), (1000 * 60 * 120)) {
-//        nurseTimer = new CountDownTimer((1000 * 30 ), (1000 * 30)) {
-            public void onTick(long millisUntilFinished) {}
+        nurseTimer = new CountDownTimer(7200000, 10000) {
+//                    nurseTimer = new CountDownTimer((1000 * 30 ), (10000)) {
+            public void onTick(long millisUntilFinished) {
+                Log.d("Main_Room", nurseId +" is Working");
+            }
             public void onFinish() {
                 nurseImage.setVisibility(View.GONE);
                 Log.d("NurseTimer","nurseTimeout() "+"Removed");

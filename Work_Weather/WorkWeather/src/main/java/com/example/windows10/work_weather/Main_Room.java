@@ -238,11 +238,11 @@ public class Main_Room extends AppCompatActivity
             public void onClick(DialogInterface dialog, int whichButton) {
                 try {
                     int id = Integer.parseInt(input.getText().toString());
-                    if (id == 0) {
+                    if(id == 0) {
                         nurseMenu();
                     } else
                         Toast.makeText(getApplicationContext(), "Sorry wrong password", Toast.LENGTH_LONG).show();
-                } catch (Exception e) {
+                } catch(Exception e) {
                     Toast.makeText(getApplicationContext(), "\t\t\tSorry invalid input", Toast.LENGTH_LONG).show();
                 }
             }
@@ -280,7 +280,7 @@ public class Main_Room extends AppCompatActivity
                     Toast.makeText(getApplicationContext(), "\t\t\tSorry invalid input\nonly 6 digits are acceptable", Toast.LENGTH_LONG).show();
                     loginID();
                 }
-                if (!notUsedNotification)
+                if(!notUsedNotification)
                     unusedNotification();
                 else{
                     notifyUsers.cancel();
@@ -324,7 +324,6 @@ public class Main_Room extends AppCompatActivity
             database.changedMind(oldNurse.returnID());
             oldNurse.maxedReached();
         }
-        viewController.fadeTheImage(nurseView, 1, 0, View.VISIBLE);
     }
 
     private void showNurses(){
@@ -334,6 +333,7 @@ public class Main_Room extends AppCompatActivity
             counter.resetCount();
             sub = true;
         }
+
         if (!sub) { //boolean check to see if mx number of nurses already visible
             ImageView nurseView = nurseArray.get(counter.getCount());
             changeNurse(nurseView);
@@ -342,11 +342,11 @@ public class Main_Room extends AppCompatActivity
             NurseTimer nurse  = getTimer(counter.getCount());
             if (nurse != null) {
                 nurse.startTimer();
-            }
-            else{
+            } else{
                 setNurseTimers();
                 showNurses();
             }
+
             counter.increaseCount();
             checkWeather();
             if (counter.getCount() == nurseArray.size()) {
@@ -367,20 +367,19 @@ public class Main_Room extends AppCompatActivity
             redoChangeNurse(nurseView, newCount);
             NurseTimer oldNurse = getTimer(newCount);
             if (oldNurse != null) {
-//                database.changedMind(oldNurse.returnID());
                 oldNurse.maxedReached();
             }
-            viewController.fadeTheImage(nurseView, 1, 0, View.VISIBLE);
+
             setTimer(nurseView, newCount);
             NurseTimer nurse = getTimer(counter.getCount());
             if (nurse != null) {
                 nurse.startTimer();
             }
-            checkWeather();
+            nurseView.setVisibility(View.VISIBLE);
             if (counter.getCount() == nurseArray.size()) {
                 counter.resetCount();
             }
-            counter.increaseCount();
+            checkWeather();
         }
         else if(sub && !nurseMap.containsKey(idNow)){
             final int newCount = counter.getCount();
@@ -391,17 +390,17 @@ public class Main_Room extends AppCompatActivity
                 database.changedMind(oldNurse.returnID());
                 oldNurse.maxedReached();
             }
-            viewController.fadeTheImage(nurseView, 1, 0, View.VISIBLE);
+            nurseView.setVisibility(View.VISIBLE);
             setTimer(nurseView, newCount);
             NurseTimer nurse = getTimer(counter.getCount());
             if (nurse != null) {
                 nurse.startTimer();
             }
-            checkWeather();
             if (counter.getCount() == nurseArray.size()) {
                 counter.resetCount();
             }
             counter.increaseCount();
+            checkWeather();
         }
     }
 
@@ -419,8 +418,7 @@ public class Main_Room extends AppCompatActivity
             NurseTimer nurse  = getTimer(counter.getCount());
             if (nurse != null) {
                 nurse.startTimer();
-            }
-            else{
+            } else{
                 setNurseTimers();
                 feelingChanged();
             }
@@ -442,18 +440,17 @@ public class Main_Room extends AppCompatActivity
                 if (nurse != null) {
                     nurse.startTimer();
                 }
-                checkWeather();
+
                 if (counter.getCount() == nurseArray.size()) {
                     counter.resetCount();
                     sub = true;
                 }
-//                counter.increaseCount();
+                checkWeather();
             }
             else maxedNurses();
         }
         else maxedNurses();
     }
-
 
     private void unusedNotification(){
         notUsedNotification = true;
@@ -698,12 +695,10 @@ public class Main_Room extends AppCompatActivity
                 removeNurse();
             }
         }
-
         Double avg = database.getNewRoomAverage(mood);
         final String query = "INSERT into nurses(`id`,`input`,`median`,`date`,`shift_id`,`inputDate`,`changed`)" +
                 "VALUES('" + idNow + "','"+ mood +"','"+ avg +"','"+ currentDateTimeString +"','"+ database.getShiftNumber()+"','"+
                 database.getDay()+"','"+ 0 +"');";
-
         database.addMedian(avg,currentDateTimeString,database.getShiftNumber());
         database.execSQL(query);
         setInvisible();
@@ -711,10 +706,14 @@ public class Main_Room extends AppCompatActivity
         checkWeather();
 
         boolean found = nurseMap.containsKey(idNow);
-        if(found)
-            feelingChanged();
-        else
-            showNurses();
+        if(sub)
+            maxedNurses();
+        else {
+            if (found)
+                feelingChanged();
+            else
+                showNurses();
+        }
     }
 
     private void databaseReset() {

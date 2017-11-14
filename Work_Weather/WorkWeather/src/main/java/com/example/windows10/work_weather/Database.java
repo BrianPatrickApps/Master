@@ -41,14 +41,13 @@ class Database implements Serializable{
         if(collectedFormattedUsers == null){
             Toast.makeText(context, "Empty", Toast.LENGTH_SHORT).show();
             return theArray;
-        }
-        else {
+        } else {
             while (collectedFormattedUsers.moveToNext()) {
                 String result = collectedFormattedUsers.getString(0) +
-                            "/" + collectedFormattedUsers.getString(1) +
-                            "/" + collectedFormattedUsers.getString(2) +
-                            "/" + collectedFormattedUsers.getString(3) +
-                            "/" + collectedFormattedUsers.getString(4);
+                        "/" + collectedFormattedUsers.getString(1) +
+                        "/" + collectedFormattedUsers.getString(2) +
+                        "/" + collectedFormattedUsers.getString(3) +
+                        "/" + collectedFormattedUsers.getString(4);
                 String newResult[] = result.split("/");
                 theArray.add(newResult);
             }
@@ -270,7 +269,7 @@ class Database implements Serializable{
         return factCheck;
     }
 
-     void changedMind(String id){
+    void changedMind(String id){
         database.execSQL("UPDATE nurses set changed = '"+ 1 + "' where id= '"+
                 id +"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';");
         Log.d("Database","changedMind() "+"changedMind is called");
@@ -293,7 +292,7 @@ class Database implements Serializable{
                     1 + "' where id= '"+previousRoomNurses.get(i)+"'AND inputDate ='"+ getDay()+ "' AND shift_id ='"+ getShiftNumber() +"';");
         }
     }
-     void closeDatabase(){
+    void closeDatabase(){
         database.close();
-     }
+    }
 }

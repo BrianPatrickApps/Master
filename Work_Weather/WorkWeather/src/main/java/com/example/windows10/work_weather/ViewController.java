@@ -19,7 +19,8 @@ class ViewController implements Serializable{
     private ImageView weatherOverlay;
     private ImageView inputOverlay;
 
-    ViewController(RelativeLayout mainScreen, @SuppressWarnings("deprecation") AbsoluteLayout nurse, RelativeLayout inputScreen, ImageView rainOverlay, ImageView weatherOverlay,ImageView inputOverlay){
+    ViewController(RelativeLayout mainScreen, @SuppressWarnings("deprecation") AbsoluteLayout nurse,
+                   RelativeLayout inputScreen, ImageView rainOverlay, ImageView weatherOverlay,ImageView inputOverlay){
         this.mainScreen = mainScreen;
         this.nurse = nurse;
         this.inputScreen = inputScreen;
@@ -98,15 +99,15 @@ class ViewController implements Serializable{
         Animation fadeOut = new AlphaAnimation(1, 0);
         fadeOut.setInterpolator(new AccelerateInterpolator());
         fadeOut.setDuration(400);
-            fadeOut.setAnimationListener(new Animation.AnimationListener()
+        fadeOut.setAnimationListener(new Animation.AnimationListener()
+        {
+            public void onAnimationEnd(Animation animation)
             {
-                public void onAnimationEnd(Animation animation)
-                {
-                    weatherOverlay.setVisibility(View.GONE);
-                }
-                public void onAnimationRepeat(Animation animation) {}
-                public void onAnimationStart(Animation animation) {}
-            });
+                weatherOverlay.setVisibility(View.GONE);
+            }
+            public void onAnimationRepeat(Animation animation) {}
+            public void onAnimationStart(Animation animation) {}
+        });
 
         weatherOverlay.startAnimation(fadeOut);
     }
